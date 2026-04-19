@@ -1,0 +1,33 @@
+{
+  "name": "DULA Content Creator",
+  "short_name": "DULA",
+  "description": "AI Content Creator Pro para YouTube, TikTok, Instagram y más",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0a0a0f",
+  "theme_color": "#00ffff",
+  "orientation": "any",
+  "lang": "es",
+  "icons": [
+    {
+      "src": "icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ],
+  "categories": ["productivity", "utilities", "social"],
+  "screenshots": [],
+  "shortcuts": [
+    {
+      "name": "Generar Contenido",
+      "url": "./index.html#content",
+      "description": "Ir al generador de contenido"
+    }
+  ]
+}
