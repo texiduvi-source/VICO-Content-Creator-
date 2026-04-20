@@ -1,0 +1,2311 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DULA CREATOR - AI Content Creator Pro</title>
+<meta name="theme-color" content="#0a0a0f">
+<link rel="manifest" href="#" id="manifest-link">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --bg2: #12121a;
+    --bg3: #1a1a2e;
+    --accent: #7c3aed;
+    --accent2: #a855f7;
+    --accent3: #06b6d4;
+    --gold: #f59e0b;
+    --green: #10b981;
+    --red: #ef4444;
+    --text: #e2e8f0;
+    --text2: #94a3b8;
+    --border: #2d2d4e;
+    --card: #16162a;
+    --radius: 12px;
+    --shadow: 0 4px 24px rgba(124,58,237,0.15);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; min-height: 100vh; }
+  
+  /* HEADER */
+  .header { background: linear-gradient(135deg, var(--bg2), var(--bg3)); border-bottom: 1px solid var(--border); padding: 12px 20px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
+  .logo { font-size: 1.4rem; font-weight: 800; background: linear-gradient(135deg, var(--accent2), var(--accent3)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .logo span { font-size: 0.75rem; display: block; color: var(--text2); -webkit-text-fill-color: var(--text2); font-weight: 400; }
+  .header-right { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .lang-btn { background: var(--bg3); border: 1px solid var(--border); color: var(--text2); padding: 4px 10px; border-radius: 6px; cursor: pointer; font-size: 0.8rem; transition: all 0.2s; }
+  .lang-btn.active, .lang-btn:hover { background: var(--accent); color: white; border-color: var(--accent); }
+  .install-btn { background: linear-gradient(135deg, var(--accent), var(--accent2)); color: white; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-size: 0.85rem; font-weight: 600; }
+  .admin-badge { background: linear-gradient(135deg, var(--gold), #f97316); color: #000; padding: 4px 10px; border-radius: 6px; font-size: 0.75rem; font-weight: 700; display: none; }
+  .admin-badge.show { display: inline-block; }
+
+  /* SIDEBAR */
+  .layout { display: flex; min-height: calc(100vh - 60px); }
+  .sidebar { width: 220px; background: var(--bg2); border-right: 1px solid var(--border); padding: 16px 0; flex-shrink: 0; }
+  .nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 18px; cursor: pointer; color: var(--text2); font-size: 0.88rem; transition: all 0.2s; border-left: 3px solid transparent; }
+  .nav-item:hover { background: var(--bg3); color: var(--text); }
+  .nav-item.active { background: linear-gradient(90deg, rgba(124,58,237,0.2), transparent); color: var(--accent2); border-left-color: var(--accent2); }
+  .nav-item .nav-icon { font-size: 1.1rem; width: 22px; text-align: center; }
+  .nav-badge { background: var(--red); color: white; font-size: 0.6rem; padding: 1px 5px; border-radius: 10px; font-weight: 700; }
+  .nav-badge.gold { background: var(--gold); color: #000; }
+
+  /* MAIN */
+  .main { flex: 1; padding: 24px; overflow-y: auto; max-width: 100%; }
+  .section { display: none; }
+  .section.active { display: block; }
+  .section-title { font-size: 1.5rem; font-weight: 700; margin-bottom: 20px; background: linear-gradient(135deg, var(--accent2), var(--accent3)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+  /* CARDS */
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; margin-bottom: 20px; box-shadow: var(--shadow); }
+  .card-title { font-size: 1rem; font-weight: 600; color: var(--accent2); margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+
+  /* INPUTS */
+  input, textarea, select { background: var(--bg3); border: 1px solid var(--border); color: var(--text); border-radius: 8px; padding: 10px 14px; width: 100%; font-size: 0.9rem; font-family: inherit; transition: border-color 0.2s; outline: none; }
+  input:focus, textarea:focus, select:focus { border-color: var(--accent); }
+  textarea { min-height: 100px; resize: vertical; }
+  label { font-size: 0.82rem; color: var(--text2); margin-bottom: 5px; display: block; }
+  .form-group { margin-bottom: 14px; }
+  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  @media (max-width: 600px) { .row { grid-template-columns: 1fr; } .sidebar { display: none; } }
+
+  /* BUTTONS */
+  .btn { display: inline-flex; align-items: center; gap: 6px; padding: 10px 18px; border-radius: 8px; border: none; cursor: pointer; font-size: 0.88rem; font-weight: 600; transition: all 0.2s; }
+  .btn-primary { background: linear-gradient(135deg, var(--accent), var(--accent2)); color: white; }
+  .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(124,58,237,0.4); }
+  .btn-secondary { background: var(--bg3); color: var(--text2); border: 1px solid var(--border); }
+  .btn-secondary:hover { border-color: var(--accent2); color: var(--accent2); }
+  .btn-gold { background: linear-gradient(135deg, var(--gold), #f97316); color: #000; }
+  .btn-green { background: linear-gradient(135deg, var(--green), #059669); color: white; }
+  .btn-sm { padding: 6px 12px; font-size: 0.8rem; }
+  .btn-group { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+  .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; }
+
+  /* OUTPUT */
+  .output-box { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 16px; min-height: 120px; font-size: 0.9rem; line-height: 1.7; color: var(--text); white-space: pre-wrap; word-break: break-word; position: relative; }
+  .output-placeholder { color: var(--text2); font-style: italic; }
+
+  /* TABS */
+  .tabs { display: flex; gap: 4px; margin-bottom: 20px; background: var(--bg2); padding: 4px; border-radius: 10px; }
+  .tab { flex: 1; padding: 8px 12px; border: none; background: transparent; color: var(--text2); cursor: pointer; border-radius: 8px; font-size: 0.85rem; font-weight: 500; transition: all 0.2s; text-align: center; }
+  .tab.active { background: var(--accent); color: white; }
+
+  /* METRICS */
+  .metric-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .metric-card { background: var(--bg3); border-radius: 10px; padding: 16px; text-align: center; border: 1px solid var(--border); }
+  .metric-val { font-size: 1.8rem; font-weight: 800; color: var(--accent2); }
+  .metric-label { font-size: 0.75rem; color: var(--text2); margin-top: 4px; }
+  .progress-bar { height: 6px; background: var(--bg3); border-radius: 3px; margin-top: 8px; overflow: hidden; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent2)); border-radius: 3px; transition: width 1s ease; }
+
+  /* CHAT */
+  .chat-container { display: flex; flex-direction: column; height: 500px; }
+  .chat-messages { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+  .chat-msg { max-width: 80%; padding: 12px 16px; border-radius: 12px; font-size: 0.88rem; line-height: 1.6; }
+  .chat-msg.user { background: linear-gradient(135deg, var(--accent), var(--accent2)); color: white; align-self: flex-end; border-bottom-right-radius: 4px; }
+  .chat-msg.ai { background: var(--bg3); color: var(--text); align-self: flex-start; border-bottom-left-radius: 4px; border: 1px solid var(--border); }
+  .chat-msg.ai .msg-label { font-size: 0.72rem; color: var(--accent3); font-weight: 700; margin-bottom: 4px; }
+  .chat-input-area { display: flex; gap: 8px; padding: 12px; border-top: 1px solid var(--border); }
+  .chat-input-area input { flex: 1; }
+  .chat-locked { text-align: center; padding: 40px 20px; color: var(--text2); }
+  .chat-locked .lock-icon { font-size: 3rem; margin-bottom: 12px; }
+
+  /* GUIDE */
+  .guide-tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
+  .guide-tab { padding: 8px 16px; border-radius: 20px; border: 1px solid var(--border); background: var(--bg3); color: var(--text2); cursor: pointer; font-size: 0.85rem; transition: all 0.2s; }
+  .guide-tab.active { background: var(--accent); color: white; border-color: var(--accent); }
+  .guide-content { display: none; }
+  .guide-content.active { display: block; }
+  .guide-card { background: var(--bg3); border-radius: 10px; padding: 16px; margin-bottom: 12px; border-left: 3px solid var(--accent2); }
+  .guide-card h4 { color: var(--accent2); margin-bottom: 8px; font-size: 0.95rem; }
+  .guide-card p { color: var(--text2); font-size: 0.85rem; line-height: 1.6; }
+  .translation-block { background: var(--bg3); border-radius: 10px; padding: 16px; margin-bottom: 12px; }
+  .translation-block .lang-label { font-size: 0.75rem; font-weight: 700; color: var(--accent3); margin-bottom: 4px; }
+  .translation-block p { font-size: 0.88rem; line-height: 1.6; color: var(--text); }
+
+  /* SETTINGS */
+  .api-status { display: inline-flex; align-items: center; gap: 6px; font-size: 0.8rem; padding: 4px 10px; border-radius: 20px; }
+  .api-status.ok { background: rgba(16,185,129,0.15); color: var(--green); }
+  .api-status.err { background: rgba(239,68,68,0.15); color: var(--red); }
+  .api-status.idle { background: var(--bg3); color: var(--text2); }
+  .model-select-group { background: var(--bg3); border-radius: 10px; padding: 14px; margin-bottom: 12px; border: 1px solid var(--border); }
+  .model-select-group label { color: var(--accent2); font-weight: 600; margin-bottom: 8px; }
+
+  /* POPUP */
+  .popup-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 1000; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
+  .popup-box { background: var(--card); border: 1px solid var(--accent); border-radius: 16px; padding: 28px; max-width: 480px; width: 90%; box-shadow: 0 20px 60px rgba(124,58,237,0.3); }
+  .popup-box h3 { font-size: 1.2rem; color: var(--accent2); margin-bottom: 16px; }
+  .popup-box .unlock-list { list-style: none; margin: 16px 0; }
+  .popup-box .unlock-list li { padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 0.88rem; display: flex; align-items: center; gap: 8px; }
+  .popup-box .unlock-list li:last-child { border-bottom: none; }
+  .popup-close { background: linear-gradient(135deg, var(--accent), var(--accent2)); color: white; border: none; padding: 10px 24px; border-radius: 8px; cursor: pointer; font-weight: 600; width: 100%; margin-top: 12px; font-size: 0.9rem; }
+
+  /* TRENDS */
+  .trend-item { display: flex; align-items: center; gap: 12px; padding: 12px; background: var(--bg3); border-radius: 8px; margin-bottom: 8px; border: 1px solid var(--border); cursor: pointer; transition: border-color 0.2s; }
+  .trend-item:hover { border-color: var(--accent2); }
+  .trend-rank { font-size: 1.2rem; font-weight: 800; color: var(--accent2); width: 30px; }
+  .trend-info { flex: 1; }
+  .trend-info .trend-name { font-weight: 600; font-size: 0.9rem; }
+  .trend-info .trend-meta { font-size: 0.75rem; color: var(--text2); }
+  .trend-badge { font-size: 0.7rem; padding: 2px 8px; border-radius: 10px; background: rgba(124,58,237,0.2); color: var(--accent2); }
+
+  /* NOTES */
+  .notes-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 14px; }
+  .note-card { border-radius: 10px; padding: 14px; border: 1px solid var(--border); position: relative; }
+  .note-card .note-title { font-weight: 600; margin-bottom: 8px; font-size: 0.9rem; }
+  .note-card .note-body { font-size: 0.82rem; color: var(--text2); line-height: 1.5; }
+  .note-card .note-actions { display: flex; gap: 6px; margin-top: 10px; }
+
+  /* SPINNER */
+  .spinner { width: 20px; height: 20px; border: 2px solid rgba(255,255,255,0.3); border-top-color: white; border-radius: 50%; animation: spin 0.7s linear infinite; display: inline-block; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* TOAST */
+  .toast { position: fixed; bottom: 24px; right: 24px; background: var(--card); border: 1px solid var(--accent); border-radius: 10px; padding: 12px 20px; font-size: 0.88rem; z-index: 9999; transform: translateY(100px); opacity: 0; transition: all 0.3s; max-width: 320px; }
+  .toast.show { transform: translateY(0); opacity: 1; }
+  .toast.success { border-color: var(--green); }
+  .toast.error { border-color: var(--red); }
+
+  /* CHECKBOXES */
+  .checkbox-group { display: flex; flex-wrap: wrap; gap: 10px; }
+  .checkbox-item { display: flex; align-items: center; gap: 6px; background: var(--bg3); padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border); cursor: pointer; font-size: 0.85rem; transition: border-color 0.2s; }
+  .checkbox-item.checked { border-color: var(--accent2); color: var(--accent2); }
+  .checkbox-item input { display: none; }
+
+  /* PROMPT LIBRARY */
+  .prompt-item { background: var(--bg3); border-radius: 8px; padding: 12px; margin-bottom: 8px; border: 1px solid var(--border); display: flex; align-items: flex-start; gap: 10px; }
+  .prompt-item .prompt-text { flex: 1; font-size: 0.85rem; line-height: 1.5; }
+  .prompt-item .prompt-actions { display: flex; gap: 6px; flex-shrink: 0; }
+
+  /* BUTTON CREATOR */
+  .btn-preview-area { display: flex; flex-wrap: wrap; gap: 10px; padding: 16px; background: var(--bg); border-radius: 8px; min-height: 60px; border: 1px dashed var(--border); }
+</style>
+</head>
+<body>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- POPUP UNLOCK -->
+<div class="popup-overlay" id="unlockPopup" style="display:none;">
+  <div class="popup-box">
+    <h3 id="popupTitle">🔓 Acceso Desbloqueado</h3>
+    <p id="popupSubtitle" style="color:var(--text2);font-size:0.88rem;"></p>
+    <ul class="unlock-list" id="unlockList"></ul>
+    <button class="popup-close" onclick="closePopup()">¡Entendido!</button>
+  </div>
+</div>
+
+<!-- HEADER -->
+<div class="header">
+  <div>
+    <div class="logo">DULA CREATOR<span>AI Content Creator Pro</span></div>
+  </div>
+  <div class="header-right">
+    <span class="admin-badge" id="adminBadge">👑 ADMIN</span>
+    <button class="lang-btn active" onclick="setLang('es')" id="btn-lang-es">ES</button>
+    <button class="lang-btn" onclick="setLang('en')" id="btn-lang-en">EN</button>
+    <button class="lang-btn" onclick="setLang('zh')" id="btn-lang-zh">中文</button>
+    <button class="install-btn" onclick="installApp()" data-i18n="install">Instalar App</button>
+  </div>
+</div>
+
+<!-- LAYOUT -->
+<div class="layout">
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="nav-item active" onclick="showSection('content')" data-section="content">
+      <span class="nav-icon">✍️</span><span data-i18n="nav_content">Contenido</span>
+    </div>
+    <div class="nav-item" onclick="showSection('storytelling')" data-section="storytelling">
+      <span class="nav-icon">📖</span><span data-i18n="nav_story">Storytelling Pro</span>
+      <span class="nav-badge">NEW</span>
+    </div>
+    <div class="nav-item" onclick="showSection('voice')" data-section="voice">
+      <span class="nav-icon">🎙️</span><span data-i18n="nav_voice">Voz & Música</span>
+    </div>
+    <div class="nav-item" onclick="showSection('image')" data-section="image">
+      <span class="nav-icon">🎨</span><span data-i18n="nav_image">Imagen & Branding</span>
+    </div>
+    <div class="nav-item" onclick="showSection('seo')" data-section="seo">
+      <span class="nav-icon">📊</span><span data-i18n="nav_seo">SEO & Assets</span>
+    </div>
+    <div class="nav-item" onclick="showSection('campaigns')" data-section="campaigns">
+      <span class="nav-icon">🚀</span><span data-i18n="nav_campaigns">Campañas</span>
+    </div>
+    <div class="nav-item" onclick="showSection('chat')" data-section="chat">
+      <span class="nav-icon">🤖</span><span data-i18n="nav_chat">Chat IA</span>
+    </div>
+    <div class="nav-item" onclick="showSection('notes')" data-section="notes">
+      <span class="nav-icon">📝</span><span data-i18n="nav_notes">Notas</span>
+    </div>
+    <div class="nav-item" onclick="showSection('prompts')" data-section="prompts">
+      <span class="nav-icon">💡</span><span data-i18n="nav_prompts">Prompts</span>
+    </div>
+    <div class="nav-item" onclick="showSection('buttons')" data-section="buttons">
+      <span class="nav-icon">🔘</span><span data-i18n="nav_buttons">Botones</span>
+    </div>
+    <div class="nav-item" onclick="showSection('resources')" data-section="resources">
+      <span class="nav-icon">🌐</span><span data-i18n="nav_resources">Recursos</span>
+    </div>
+    <div class="nav-item" onclick="showSection('guide')" data-section="guide">
+      <span class="nav-icon">📚</span><span data-i18n="nav_guide">Guía Premium</span>
+      <span class="nav-badge gold">★</span>
+    </div>
+    <div class="nav-item" onclick="showSection('settings')" data-section="settings">
+      <span class="nav-icon">⚙️</span><span data-i18n="nav_settings">Ajustes</span>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main">
+
+    <!-- ===== CONTENT ===== -->
+    <div class="section active" id="section-content">
+      <div class="section-title" data-i18n="content_title">Generador de Contenido Web & Redes Sociales</div>
+      <div class="tabs">
+        <button class="tab active" onclick="switchTab('content','prompt')" data-i18n="tab_prompt">Desde Prompt</button>
+        <button class="tab" onclick="switchTab('content','url')" data-i18n="tab_url">Desde URL/Noticia</button>
+        <button class="tab" onclick="switchTab('content','script')" data-i18n="tab_script">Guión YouTube/TikTok</button>
+      </div>
+
+      <!-- TAB PROMPT -->
+      <div id="content-tab-prompt">
+        <div class="card">
+          <div class="form-group">
+            <label data-i18n="lbl_prompt_topic">Prompt / Tema del contenido</label>
+            <textarea id="c-prompt" placeholder="Ej: 5 estrategias de marketing digital para 2025..."></textarea>
+          </div>
+          <div class="row">
+            <div class="form-group">
+              <label data-i18n="lbl_platform">Plataforma</label>
+              <select id="c-platform">
+                <option value="blog">Blog / Web</option>
+                <option value="instagram">Instagram</option>
+                <option value="tiktok">TikTok</option>
+                <option value="youtube">YouTube</option>
+                <option value="twitter">Twitter/X</option>
+                <option value="linkedin">LinkedIn</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label data-i18n="lbl_tone">Tono</label>
+              <select id="c-tone">
+                <option value="profesional">Profesional</option>
+                <option value="casual">Casual / Conversacional</option>
+                <option value="epico">Épico / Dramático</option>
+                <option value="humor">Con humor</option>
+                <option value="educativo">Educativo</option>
+              </select>
+            </div>
+          </div>
+          <div class="btn-group">
+            <button class="btn btn-primary" onclick="generateContent()" id="btn-gen-content">
+              <span>✨</span> <span data-i18n="btn_generate">Generar Contenido</span>
+            </button>
+            <button class="btn btn-secondary" onclick="generateHashtags('c-prompt')" id="btn-gen-hashtags">
+              <span>#</span> <span data-i18n="btn_hashtags">Generar Hashtags</span>
+            </button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title" data-i18n="output_label">Resultado</div>
+          <div class="output-box" id="content-output"><span class="output-placeholder" data-i18n="output_placeholder">El contenido generado aparecerá aquí...</span></div>
+          <div class="btn-group">
+            <button class="btn btn-secondary btn-sm" onclick="copyOutput('content-output')" data-i18n="btn_copy">Copiar</button>
+            <button class="btn btn-secondary btn-sm" onclick="extendOutput('content-output','intro')" data-i18n="btn_ext_intro">Extender Intro</button>
+            <button class="btn btn-secondary btn-sm" onclick="extendOutput('content-output','analisis')" data-i18n="btn_ext_analysis">Extender Análisis</button>
+            <button class="btn btn-secondary btn-sm" onclick="extendOutput('content-output','conclusion')" data-i18n="btn_ext_conclusion">Extender Conclusión</button>
+            <button class="btn btn-gold btn-sm" onclick="saveToPrompts('content-output')" data-i18n="btn_save_prompt">Guardar en Prompts</button>
+          </div>
+          <div id="hashtags-output" style="margin-top:12px;display:none;">
+            <div class="card-title">#️⃣ Hashtags</div>
+            <div class="output-box" id="hashtags-box"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB URL -->
+      <div id="content-tab-url" style="display:none;">
+        <div class="card">
+          <div class="form-group">
+            <label data-i18n="lbl_url">URL de la noticia o artículo</label>
+            <input type="url" id="c-url" placeholder="https://...">
+          </div>
+          <div class="form-group">
+            <label data-i18n="lbl_extra_instructions">Instrucciones adicionales (opcional)</label>
+            <textarea id="c-url-extra" style="min-height:60px;" placeholder="Ej: Enfócate en el impacto económico..."></textarea>
+          </div>
+          <div class="row">
+            <div class="form-group">
+              <label data-i18n="lbl_platform">Plataforma</label>
+              <select id="c-url-platform">
+                <option value="blog">Blog / Web</option>
+                <option value="instagram">Instagram</option>
+                <option value="tiktok">TikTok</option>
+                <option value="youtube">YouTube</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label data-i18n="lbl_tone">Tono</label>
+              <select id="c-url-tone">
+                <option value="periodistico">Periodístico</option>
+                <option value="analitico">Analítico</option>
+                <option value="opinion">Opinión / Editorial</option>
+                <option value="viral">Viral / Impactante</option>
+              </select>
+            </div>
+          </div>
+          <button class="btn btn-primary" onclick="generateFromURL()">
+            <span>🔍</span> <span data-i18n="btn_analyze">Analizar & Generar</span>
+          </button>
+        </div>
+        <div class="card">
+          <div class="output-box" id="url-output"><span class="output-placeholder" data-i18n="output_placeholder">El contenido generado aparecerá aquí...</span></div>
+          <div class="btn-group">
+            <button class="btn btn-secondary btn-sm" onclick="copyOutput('url-output')" data-i18n="btn_copy">Copiar</button>
+            <button class="btn btn-gold btn-sm" onclick="saveToPrompts('url-output')" data-i18n="btn_save_prompt">Guardar en Prompts</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB SCRIPT -->
+      <div id="content-tab-script" style="display:none;">
+        <div class="card">
+          <div class="form-group">
+            <label data-i18n="lbl_script_topic">Tema del guión</label>
+            <textarea id="c-script-topic" style="min-height:70px;" placeholder="Ej: Cómo ganar dinero con IA en 2025..."></textarea>
+          </div>
+          <div class="row">
+            <div class="form-group">
+              <label data-i18n="lbl_duration">Duración objetivo</label>
+              <select id="c-script-duration">
+                <option value="corto">Corto (30-60 seg - TikTok)</option>
+                <option value="medio">Medio (3-5 min - YouTube Shorts)</option>
+                <option value="largo">Largo (10-15 min - YouTube)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label data-i18n="lbl_style">Estilo</label>
+              <select id="c-script-style">
+                <option value="educativo">Educativo</option>
+                <option value="entretenimiento">Entretenimiento</option>
+                <option value="tutorial">Tutorial</option>
+                <option value="review">Review / Reseña</option>
+                <option value="vlog">Vlog personal</option>
+              </select>
+            </div>
+          </div>
+          <button class="btn btn-primary" onclick="generateScript()">
+            <span>🎬</span> <span data-i18n="btn_gen_script">Generar Guión</span>
+          </button>
+        </div>
+        <div class="card">
+          <div class="output-box" id="script-output"><span class="output-placeholder" data-i18n="output_placeholder">El contenido generado aparecerá aquí...</span></div>
+          <div class="btn-group">
+            <button class="btn btn-secondary btn-sm" onclick="copyOutput('script-output')" data-i18n="btn_copy">Copiar</button>
+            <button class="btn btn-gold btn-sm" onclick="saveToPrompts('script-output')" data-i18n="btn_save_prompt">Guardar en Prompts</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== STORYTELLING ===== -->
+    <div class="section" id="section-storytelling">
+      <div class="section-title" data-i18n="nav_story">Storytelling Pro</div>
+      <div class="card">
+        <div class="form-group">
+          <label data-i18n="lbl_story_topic">Tema / Historia</label>
+          <textarea id="story-topic" placeholder="Ej: Un emprendedor que fracasó 5 veces antes de triunfar..."></textarea>
+        </div>
+        <div class="row">
+          <div class="form-group">
+            <label data-i18n="lbl_platform">Plataforma objetivo</label>
+            <select id="story-platform">
+              <option value="youtube">YouTube</option>
+              <option value="tiktok">TikTok</option>
+              <option value="podcast">Podcast</option>
+              <option value="instagram">Instagram Reels</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label data-i18n="lbl_chapters">Número de capítulos/segmentos</label>
+            <select id="story-chapters">
+              <option value="3">3 capítulos</option>
+              <option value="4" selected>4 capítulos</option>
+              <option value="5">5 capítulos</option>
+              <option value="6">6 capítulos</option>
+            </select>
+          </div>
+        </div>
+        <div class="btn-group">
+          <button class="btn btn-primary" onclick="generateStory()">
+            <span>📖</span> <span data-i18n="btn_gen_story">Generar Historia</span>
+          </button>
+          <button class="btn btn-secondary" onclick="getTrends()">
+            <span>🔥</span> <span data-i18n="btn_trends">Tendencias</span>
+          </button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title" data-i18n="story_preview">Vista previa de estructura:</div>
+        <div id="story-structure" style="margin-bottom:14px;">
+          <div style="background:var(--bg3);border-radius:8px;padding:12px;border-left:3px solid var(--accent2);margin-bottom:8px;">
+            <div style="font-weight:700;color:var(--accent2);font-size:0.8rem;">INTRO / HOOK</div>
+            <div style="color:var(--text2);font-size:0.82rem;margin-top:4px;" data-i18n="story_generate_msg">Genera una historia para ver la estructura aquí...</div>
+          </div>
+        </div>
+        <div class="output-box" id="story-output"><span class="output-placeholder" data-i18n="output_placeholder">El contenido generado aparecerá aquí...</span></div>
+        <div class="btn-group">
+          <button class="btn btn-secondary btn-sm" onclick="extendOutput('story-output','seccion')" data-i18n="btn_ext_section">Extender Sección</button>
+          <button class="btn btn-secondary btn-sm" onclick="generateStory()" data-i18n="btn_regen">Regenerar Historia</button>
+          <button class="btn btn-gold btn-sm" onclick="saveToPrompts('story-output')" data-i18n="btn_save_prompt">Guardar en Prompts</button>
+          <button class="btn btn-secondary btn-sm" onclick="copyOutput('story-output')" data-i18n="btn_copy_story">Copiar Historia</button>
+        </div>
+      </div>
+
+      <!-- TRENDS -->
+      <div class="card" id="trends-card">
+        <div class="card-title">🔥 <span data-i18n="trends_title">Temas Virales & Tendencias</span></div>
+        <div class="btn-group" style="margin-bottom:14px;">
+          <button class="btn btn-secondary btn-sm" onclick="getTrends()" data-i18n="btn_update_trends">Actualizar Tendencias</button>
+          <button class="btn btn-primary btn-sm" onclick="getLiveTrends()" data-i18n="btn_live_trends">Tendencias en Vivo (IA)</button>
+        </div>
+        <div id="trends-list">
+          <div style="color:var(--text2);font-size:0.85rem;" data-i18n="trends_click_msg">Haz clic en "Actualizar Tendencias" para ver temas virales.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== VOICE ===== -->
+    <div class="section" id="section-voice">
+      <div class="section-title" data-i18n="nav_voice">Voz & Música</div>
+      <div class="card">
+        <div class="card-title">🎙️ <span data-i18n="narration_title">Narración Premium</span></div>
+        <div class="form-group">
+          <label data-i18n="lbl_narration_text">Texto a narrar</label>
+          <textarea id="voice-text" placeholder="Escribe o pega el texto que quieres narrar..."></textarea>
+        </div>
+        <div class="row">
+          <div class="form-group">
+            <label data-i18n="lbl_voice_style">Estilo de voz</label>
+            <select id="voice-style">
+              <option value="epico">Épico / Dramático</option>
+              <option value="lofi">Relajado / Lo-fi</option>
+              <option value="juvenil">Juvenil / Energético</option>
+              <option value="profesional">Profesional</option>
+              <option value="misterioso">Misterioso</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label data-i18n="lbl_speed">Velocidad</label>
+            <select id="voice-speed">
+              <option value="lenta">Lenta</option>
+              <option value="normal" selected>Normal</option>
+              <option value="rapida">Rápida</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label data-i18n="lbl_pitch">Tono (pitch)</label>
+          <input type="range" id="voice-pitch" min="-10" max="10" value="0" style="padding:0;">
+          <div style="text-align:center;font-size:0.8rem;color:var(--text2);margin-top:4px;" data-i18n="lbl_neutral">Neutro</div>
+        </div>
+        <div class="btn-group">
+          <button class="btn btn-primary" onclick="generateNarration()">
+            <span>🎙️</span> <span data-i18n="btn_gen_narration">Generar Narración</span>
+          </button>
+          <a href="https://luvvoice.com" target="_blank" class="btn btn-secondary">LuvVoice</a>
+          <a href="https://ttsmaker.com" target="_blank" class="btn btn-secondary">TTSMaker</a>
+          <a href="https://elevenlabs.io" target="_blank" class="btn btn-secondary">ElevenLabs</a>
+        </div>
+        <div class="output-box" style="margin-top:14px;" id="narration-output"><span class="output-placeholder" data-i18n="output_placeholder_narration">El guión optimizado para narración aparecerá aquí...</span></div>
+        <div class="btn-group">
+          <button class="btn btn-secondary btn-sm" onclick="extendOutput('narration-output','intro')" data-i18n="btn_ext_intro">Extender Intro</button>
+          <button class="btn btn-secondary btn-sm" onclick="extendOutput('narration-output','desarrollo')" data-i18n="btn_ext_dev">Extender Desarrollo</button>
+          <button class="btn btn-secondary btn-sm" onclick="extendOutput('narration-output','cierre')" data-i18n="btn_ext_close">Extender Cierre</button>
+          <button class="btn btn-gold btn-sm" onclick="saveToPrompts('narration-output')" data-i18n="btn_save_prompt">Guardar en Prompts</button>
+          <button class="btn btn-secondary btn-sm" onclick="copyOutput('narration-output')" data-i18n="btn_copy">Copiar Guión</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">🎵 <span data-i18n="music_title">Música & Sound FX</span></div>
+        <div class="row">
+          <div class="form-group">
+            <label data-i18n="lbl_genre">Género musical</label>
+            <select id="music-genre">
+              <option value="">--- Género musical ---</option>
+              <option value="electronica">Electrónica</option>
+              <option value="lofi">Lo-fi / Chill</option>
+              <option value="epico">Épico / Orquestal</option>
+              <option value="hiphop">Hip-Hop / Trap</option>
+              <option value="ambient">Ambient</option>
+              <option value="corporate">Corporate</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label data-i18n="lbl_mood">Estado de ánimo</label>
+            <select id="music-mood">
+              <option value="energetico">Energético</option>
+              <option value="melancolico">Melancólico</option>
+              <option value="motivador">Motivador</option>
+              <option value="misterioso">Misterioso</option>
+              <option value="relajado">Relajado</option>
+            </select>
+          </div>
+        </div>
+        <div class="card-title" style="font-size:0.85rem;margin-top:8px;" data-i18n="music_tools">Herramientas de música gratuitas:</div>
+        <div class="btn-group">
+          <a href="https://soundraw.io" target="_blank" class="btn btn-secondary btn-sm">Soundraw</a>
+          <a href="https://suno.ai" target="_blank" class="btn btn-secondary btn-sm">Suno AI</a>
+          <a href="https://beatoven.ai" target="_blank" class="btn btn-secondary btn-sm">Beatoven</a>
+        </div>
+        <div class="card-title" style="font-size:0.85rem;margin-top:16px;" data-i18n="sfx_title">Sound FX Futuristas:</div>
+        <div class="btn-group">
+          <a href="https://freesound.org" target="_blank" class="btn btn-secondary btn-sm">Freesound</a>
+          <a href="https://pixabay.com/sound-effects" target="_blank" class="btn btn-secondary btn-sm">Pixabay SFX</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== IMAGE ===== -->
+    <div class="section" id="section-image">
+      <div class="section-title" data-i18n="nav_image">Imagen & Branding</div>
+      <div class="card">
+        <div class="card-title">🖼️ <span data-i18n="img_gen_title">Generador de Imágenes</span></div>
+        <div class="form-group">
+          <label data-i18n="lbl_img_prompt">Prompt de imagen</label>
+          <textarea id="img-prompt" placeholder="Ej: Futuristic cityscape at night, neon lights, cyberpunk style..."></textarea>
+        </div>
+        <div class="form-group">
+          <label data-i18n="lbl_img_preset">Preset de estilo</label>
+          <select id="img-preset">
+            <option value="">Sin preset</option>
+            <option value="cyberpunk">Cyberpunk Neon</option>
+            <option value="minimal">Minimal Corporate</option>
+            <option value="luxury">Luxury Gold</option>
+            <option value="anime">Anime / Manga</option>
+            <option value="retro">Retro Synthwave</option>
+            <option value="nature">Nature & Organic</option>
+          </select>
+        </div>
+        <div class="btn-group">
+          <button class="btn btn-primary" onclick="generateImagePrompt()">
+            <span>🎨</span> <span data-i18n="btn_gen_img">Generar Imagen (Prompt IA)</span>
+          </button>
+          <a href="https://perchance.org/ai-photo-generator" target="_blank" class="btn btn-secondary">Perchance AI</a>
+          <a href="https://stablediffusionweb.com" target="_blank" class="btn btn-secondary">Stable Diffusion</a>
+          <a href="https://ideogram.ai" target="_blank" class="btn btn-secondary">Ideogram</a>
+        </div>
+        <div class="output-box" style="margin-top:14px;" id="img-output"><span class="output-placeholder" data-i18n="output_placeholder_img">Prompt optimizado para imagen aparecerá aquí...</span></div>
+        <div class="btn-group">
+          <button class="btn btn-secondary btn-sm" onclick="copyOutput('img-output')" data-i18n="btn_copy_prompt">Copiar Prompt</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">🏷️ <span data-i18n="branding_title">Branding & Logos</span></div>
+        <div class="row">
+          <div class="form-group">
+            <label data-i18n="lbl_brand_name">Nombre de marca / canal</label>
+            <input type="text" id="brand-name" placeholder="Ej: TechVision Studio">
+          </div>
+          <div class="form-group">
+            <label data-i18n="lbl_logo_style">Estilo de logo</label>
+            <select id="logo-style">
+              <option value="futurista">Futurista / Neon</option>
+              <option value="minimalista">Minimalista</option>
+              <option value="bold">Bold / Impactante</option>
+              <option value="elegante">Elegante / Luxury</option>
+              <option value="divertido">Divertido / Colorido</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label data-i18n="lbl_colors">Colores principales</label>
+          <input type="text" id="brand-colors" placeholder="Ej: púrpura, dorado, negro">
+        </div>
+        <div class="btn-group">
+          <button class="btn btn-primary" onclick="generateLogoPrompt()">
+            <span>🏷️</span> <span data-i18n="btn_gen_logo">Generar Prompt Logo</span>
+          </button>
+          <button class="btn btn-secondary" onclick="generateBannerPrompt()">
+            <span>🖼️</span> <span data-i18n="btn_gen_banner">Generar Banner</span>
+          </button>
+          <a href="https://www.iloveimg.com" target="_blank" class="btn btn-secondary">iLoveIMG</a>
+          <a href="https://canva.com" target="_blank" class="btn btn-secondary">Canva</a>
+        </div>
+        <div class="output-box" style="margin-top:14px;" id="logo-output"><span class="output-placeholder" data-i18n="output_placeholder_logo">Prompt para logo aparecerá aquí...</span></div>
+        <div class="btn-group">
+          <button class="btn btn-secondary btn-sm" onclick="copyOutput('logo-output')" data-i18n="btn_copy_prompt_logo">Copiar Prompt Logo</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">🎬 <span data-i18n="banner_title">Banner Dinámico</span></div>
+        <div class="row">
+          <div class="form-group">
+            <label data-i18n="lbl_banner_theme">Tema del video / temporada</label>
+            <input type="text" id="banner-theme" placeholder="Ej: Gaming 2025, Navidad Tech...">
+          </div>
+          <div class="form-group">
+            <label data-i18n="lbl_platform">Plataforma</label>
+            <select id="banner-platform">
+              <option value="youtube">YouTube (2560x1440)</option>
+              <option value="tiktok">TikTok (1080x1920)</option>
+              <option value="instagram">Instagram (1080x1080)</option>
+              <option value="twitter">Twitter/X (1500x500)</option>
+            </select>
+          </div>
+        </div>
+        <button class="btn btn-primary" onclick="generateBannerPrompt()">
+          <span>🎬</span> <span data-i18n="btn_gen_banner_prompt">Generar Prompt Banner</span>
+        </button>
+        <div class="output-box" style="margin-top:14px;" id="banner-output"><span class="output-placeholder" data-i18n="output_placeholder_banner">Prompt de banner aparecerá aquí...</span></div>
+        <div class="btn-group">
+          <button class="btn btn-secondary btn-sm" onclick="copyOutput('banner-output')" data-i18n="btn_copy_prompt_banner">Copiar Prompt Banner</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== SEO ===== -->
+    <div class="section" id="section-seo">
+      <div class="section-title" data-i18n="nav_seo">SEO & Assets</div>
+      <div class="card">
+        <div class="card-title">📊 <span data-i18n="seo_title">Optimización SEO Automática</span></div>
+        <div class="form-group">
+          <label data-i18n="lbl_seo_keyword">Tema / Keyword principal</label>
+          <input type="text" id="seo-keyword" placeholder="Ej: marketing digital, inteligencia artificial...">
+        </div>
+        <div class="row">
+          <div class="form-group">
+            <label data-i18n="lbl_platform">Plataforma</label>
+            <select id="seo-platform">
+              <option value="youtube">YouTube</option>
+              <option value="tiktok">TikTok</option>
+              <option value="blog">Blog / Web</option>
+              <option value="instagram">Instagram</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label data-i18n="lbl_language">Idioma</label>
+            <select id="seo-lang">
+              <option value="es">Español</option>
+              <option value="en">English</option>
+              <option value="zh">中文</option>
+            </select>
+          </div>
+        </div>
+        <button class="btn btn-primary" onclick="generateSEO()">
+          <span>📊</span> <span data-i18n="btn_gen_seo">Generar SEO Completo</span>
+        </button>
+        <div class="output-box" style="margin-top:14px;" id="seo-output"><span class="output-placeholder" data-i18n="output_placeholder_seo">Títulos, descripciones y etiquetas SEO aparecerán aquí...</span></div>
+        <div class="btn-group">
+          <button class="btn btn-secondary btn-sm" onclick="copyOutput('seo-output')" data-i18n="btn_copy">Copiar SEO</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">📈 <span data-i18n="performance_title">Análisis de Performance Simulado</span></div>
+        <div class="metric-grid" id="metrics-grid">
+          <div class="metric-card">
+            <div class="metric-val" id="metric-engagement">--</div>
+            <div class="metric-label" data-i18n="metric_engagement">Engagement potencial</div>
+            <div class="progress-bar"><div class="progress-fill" id="prog-engagement" style="width:0%"></div></div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-val" id="metric-viral">--</div>
+            <div class="metric-label" data-i18n="metric_viral">Potencial viral</div>
+            <div class="progress-bar"><div class="progress-fill" id="prog-viral" style="width:0%"></div></div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-val" id="metric-seo">--</div>
+            <div class="metric-label" data-i18n="metric_seo">Score SEO</div>
+            <div class="progress-bar"><div class="progress-fill" id="prog-seo" style="width:0%"></div></div>
+          </div>
+        </div>
+        <div class="btn-group" style="margin-top:14px;">
+          <button class="btn btn-primary" onclick="simulateMetrics()" data-i18n="btn_simulate">Simular Métricas</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== CAMPAIGNS ===== -->
+    <div class="section" id="section-campaigns">
+      <div class="section-title" data-i18n="nav_campaigns">Generador de Campañas Multiplataforma</div>
+      <div class="card">
+        <div class="form-group">
+          <label data-i18n="lbl_campaign_topic">Tema de la campaña</label>
+          <textarea id="campaign-topic" style="min-height:70px;" placeholder="Ej: Lanzamiento de producto, campaña navideña..."></textarea>
+        </div>
+        <div class="form-group">
+          <label data-i18n="lbl_objective">Objetivo</label>
+          <select id="campaign-objective">
+            <option value="reconocimiento">Reconocimiento de marca</option>
+            <option value="engagement">Engagement / Interacción</option>
+            <option value="ventas">Ventas / Conversión</option>
+            <option value="seguidores">Ganar seguidores</option>
+            <option value="trafico">Tráfico web</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label data-i18n="lbl_platforms_include">Plataformas incluidas</label>
+          <div class="checkbox-group" id="campaign-platforms">
+            <label class="checkbox-item checked" onclick="toggleCheck(this)"><input type="checkbox" value="youtube" checked> YouTube</label>
+            <label class="checkbox-item checked" onclick="toggleCheck(this)"><input type="checkbox" value="tiktok" checked> TikTok</label>
+            <label class="checkbox-item" onclick="toggleCheck(this)"><input type="checkbox" value="instagram"> Instagram</label>
+            <label class="checkbox-item" onclick="toggleCheck(this)"><input type="checkbox" value="linkedin"> LinkedIn</label>
+            <label class="checkbox-item" onclick="toggleCheck(this)"><input type="checkbox" value="twitter"> Twitter/X</label>
+          </div>
+        </div>
+        <button class="btn btn-primary" onclick="generateCampaign()">
+          <span>🚀</span> <span data-i18n="btn_gen_campaign">Generar Campaña</span>
+        </button>
+      </div>
+      <div class="card">
+        <div class="output-box" id="campaign-output"><span class="output-placeholder" data-i18n="output_placeholder_campaign">La estrategia de campaña aparecerá aquí...</span></div>
+        <div class="btn-group">
+          <button class="btn btn-secondary btn-sm" onclick="copyOutput('campaign-output')" data-i18n="btn_copy">Copiar Campaña</button>
+          <button class="btn btn-secondary btn-sm" onclick="exportCampaign('youtube')" data-i18n="btn_export_yt">Exportar YouTube</button>
+          <button class="btn btn-secondary btn-sm" onclick="exportCampaign('tiktok')" data-i18n="btn_export_tt">Exportar TikTok</button>
+          <button class="btn btn-secondary btn-sm" onclick="exportCampaign('instagram')" data-i18n="btn_export_ig">Exportar Instagram</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== CHAT IA ===== -->
+    <div class="section" id="section-chat">
+      <div class="section-title" data-i18n="nav_chat">Chat IA Agéntico</div>
+      <div class="card" style="padding:0;overflow:hidden;">
+        <div id="chat-locked-view" class="chat-locked" style="display:none;">
+          <div class="lock-icon">🔒</div>
+          <div style="font-size:1rem;font-weight:600;margin-bottom:8px;" data-i18n="chat_locked_title">Chat bloqueado</div>
+          <div style="color:var(--text2);font-size:0.85rem;" data-i18n="chat_locked_msg">Configura al menos una API en Ajustes para desbloquear el chat.</div>
+          <button class="btn btn-primary" style="margin-top:16px;" onclick="showSection('settings')" data-i18n="btn_go_settings">Ir a Ajustes</button>
+        </div>
+        <div id="chat-active-view" style="display:none;">
+          <div style="background:var(--bg3);padding:10px 16px;border-bottom:1px solid var(--border);font-size:0.8rem;color:var(--accent3);">
+            🤖 <span data-i18n="chat_expert_label">Experto en Redes Sociales & Contenido IA</span> · <span id="chat-model-label" style="color:var(--text2);"></span>
+          </div>
+          <div class="chat-messages" id="chat-messages">
+            <div class="chat-msg ai">
+              <div class="msg-label">DULA AI</div>
+              <span data-i18n="chat_welcome">¡Hola! Soy tu asistente experto en redes sociales y creación de contenido con IA. ¿En qué puedo ayudarte hoy? Puedo ayudarte con estrategias de contenido, ideas virales, guiones, SEO, monetización y más.</span>
+            </div>
+          </div>
+          <div class="chat-input-area">
+            <input type="text" id="chat-input" placeholder="Pregunta sobre redes sociales, contenido, estrategias..." onkeydown="if(event.key==='Enter')sendChat()">
+            <button class="btn btn-primary" onclick="sendChat()">
+              <span>➤</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== NOTES ===== -->
+    <div class="section" id="section-notes">
+      <div class="section-title" data-i18n="nav_notes">Notas & Carpetas</div>
+      <div class="card">
+        <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;">
+          <button class="btn btn-secondary btn-sm active" onclick="filterNotes('all')" data-i18n="filter_all">Todas</button>
+          <button class="btn btn-secondary btn-sm" onclick="filterNotes('general')">General</button>
+          <button class="btn btn-secondary btn-sm" onclick="addFolder()" data-i18n="btn_new_folder">+ Nueva Carpeta</button>
+        </div>
+        <div class="row">
+          <div class="form-group">
+            <label data-i18n="lbl_note_title">Título de la nota</label>
+            <input type="text" id="note-title" placeholder="Título...">
+          </div>
+          <div class="form-group">
+            <label data-i18n="lbl_note_color">Color:</label>
+            <input type="color" id="note-color" value="#1a1a2e" style="height:40px;padding:4px;">
+          </div>
+        </div>
+        <div class="form-group">
+          <label data-i18n="lbl_note_content">Contenido</label>
+          <textarea id="note-content" placeholder="Escribe tu nota..."></textarea>
+        </div>
+        <button class="btn btn-primary" onclick="saveNote()" data-i18n="btn_save_note">Guardar Nota</button>
+      </div>
+      <div class="notes-grid" id="notes-grid"></div>
+    </div>
+
+    <!-- ===== PROMPTS ===== -->
+    <div class="section" id="section-prompts">
+      <div class="section-title" data-i18n="nav_prompts">Biblioteca de Prompts</div>
+      <div class="card">
+        <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;">
+          <button class="btn btn-secondary btn-sm" onclick="filterPrompts('all')" data-i18n="filter_all">Todos</button>
+          <button class="btn btn-primary btn-sm" onclick="openAddPrompt()" data-i18n="btn_add_prompt">+ Añadir Prompt</button>
+        </div>
+        <div id="prompts-list"></div>
+      </div>
+    </div>
+
+    <!-- ===== BUTTONS ===== -->
+    <div class="section" id="section-buttons">
+      <div class="section-title" data-i18n="nav_buttons">Creador de Botones desde Links</div>
+      <div class="card">
+        <div class="row">
+          <div class="form-group">
+            <label data-i18n="lbl_btn_label">Etiqueta del botón</label>
+            <input type="text" id="btn-label" placeholder="Ej: Ver Tutorial">
+          </div>
+          <div class="form-group">
+            <label>URL</label>
+            <input type="url" id="btn-url" placeholder="https://...">
+          </div>
+        </div>
+        <div class="row">
+          <div class="form-group">
+            <label data-i18n="lbl_btn_color">Color</label>
+            <input type="color" id="btn-color" value="#7c3aed" style="height:40px;padding:4px;">
+          </div>
+          <div class="form-group">
+            <label data-i18n="lbl_btn_shape">Forma</label>
+            <select id="btn-shape">
+              <option value="8px">Redondeado</option>
+              <option value="25px">Píldora</option>
+              <option value="0px">Cuadrado</option>
+            </select>
+          </div>
+        </div>
+        <button class="btn btn-primary" onclick="createButton()" data-i18n="btn_create_btn">Crear Botón</button>
+        <div class="btn-preview-area" id="btn-preview" style="margin-top:14px;"></div>
+        <div class="btn-group" style="margin-top:10px;">
+          <button class="btn btn-secondary btn-sm" onclick="copyButtonsHTML()" data-i18n="btn_copy_html">Copiar HTML</button>
+          <button class="btn btn-secondary btn-sm" onclick="clearButtons()" data-i18n="btn_clear">Limpiar</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== RESOURCES ===== -->
+    <div class="section" id="section-resources">
+      <div class="section-title" data-i18n="nav_resources">Recursos</div>
+      <div class="card">
+        <div class="card-title">🎬 <span data-i18n="res_video">Edición de Video</span></div>
+        <div class="btn-group">
+          <a href="https://capcut.com" target="_blank" class="btn btn-secondary">CapCut</a>
+          <a href="https://www.descript.com" target="_blank" class="btn btn-secondary">Descript</a>
+          <a href="https://runwayml.com" target="_blank" class="btn btn-secondary">Runway ML</a>
+          <a href="https://www.opus.pro" target="_blank" class="btn btn-secondary">Opus Clip</a>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">🤖 <span data-i18n="res_ai">Herramientas IA</span></div>
+        <div class="btn-group">
+          <a href="https://chat.openai.com" target="_blank" class="btn btn-secondary">ChatGPT</a>
+          <a href="https://gemini.google.com" target="_blank" class="btn btn-secondary">Gemini</a>
+          <a href="https://claude.ai" target="_blank" class="btn btn-secondary">Claude</a>
+          <a href="https://groq.com" target="_blank" class="btn btn-secondary">Groq</a>
+          <a href="https://openrouter.ai" target="_blank" class="btn btn-secondary">OpenRouter</a>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">📱 <span data-i18n="res_social">Gestión de Redes</span></div>
+        <div class="btn-group">
+          <a href="https://buffer.com" target="_blank" class="btn btn-secondary">Buffer</a>
+          <a href="https://hootsuite.com" target="_blank" class="btn btn-secondary">Hootsuite</a>
+          <a href="https://later.com" target="_blank" class="btn btn-secondary">Later</a>
+          <a href="https://metricool.com" target="_blank" class="btn btn-secondary">Metricool</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== GUIDE ===== -->
+    <div class="section" id="section-guide">
+      <div class="section-title" data-i18n="nav_guide">Guía Premium & Tutoriales</div>
+      
+      <!-- Lang switcher for guide -->
+      <div style="display:flex;gap:8px;margin-bottom:16px;">
+        <button class="lang-btn active" onclick="setGuideLang('es')" id="guide-lang-es">🇪🇸 ES</button>
+        <button class="lang-btn" onclick="setGuideLang('en')" id="guide-lang-en">🇬🇧 EN</button>
+        <button class="lang-btn" onclick="setGuideLang('zh')" id="guide-lang-zh">🇨🇳 中文</button>
+      </div>
+
+      <div class="guide-tabs">
+        <button class="guide-tab active" onclick="switchGuideTab('tutorials')" id="gtab-tutorials">
+          <span class="guide-tab-label" data-key="gtab_tutorials">Tutoriales</span>
+        </button>
+        <button class="guide-tab" onclick="switchGuideTab('examples')" id="gtab-examples">
+          <span class="guide-tab-label" data-key="gtab_examples">Ejemplos</span>
+        </button>
+        <button class="guide-tab" onclick="switchGuideTab('monetization')" id="gtab-monetization">
+          <span class="guide-tab-label" data-key="gtab_monetization">Monetización</span>
+        </button>
+        <button class="guide-tab" onclick="switchGuideTab('growth')" id="gtab-growth">
+          <span class="guide-tab-label" data-key="gtab_growth">Tips de Crecimiento</span>
+        </button>
+        <button class="guide-tab" onclick="switchGuideTab('policies')" id="gtab-policies">
+          <span class="guide-tab-label" data-key="gtab_policies">Políticas & Avisos</span>
+        </button>
+      </div>
+
+      <!-- TUTORIALS -->
+      <div class="guide-content active" id="guide-tutorials"></div>
+      <!-- EXAMPLES -->
+      <div class="guide-content" id="guide-examples"></div>
+      <!-- MONETIZATION -->
+      <div class="guide-content" id="guide-monetization"></div>
+      <!-- GROWTH -->
+      <div class="guide-content" id="guide-growth"></div>
+      <!-- POLICIES -->
+      <div class="guide-content" id="guide-policies"></div>
+    </div>
+
+    <!-- ===== SETTINGS ===== -->
+    <div class="section" id="section-settings">
+      <div class="section-title" data-i18n="nav_settings">Ajustes</div>
+
+      <!-- JSON KEY UPLOAD -->
+      <div class="card">
+        <div class="card-title">🔑 <span data-i18n="settings_json_title">Llave de Acceso (JSON)</span></div>
+        <p style="color:var(--text2);font-size:0.85rem;margin-bottom:12px;" data-i18n="settings_json_desc">Sube tu llave JSON para desbloquear el modo Admin y funciones premium.</p>
+        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+          <input type="file" id="json-key-file" accept=".json" style="display:none;" onchange="loadJSONKey(this)">
+          <button class="btn btn-gold" onclick="document.getElementById('json-key-file').click()">
+            <span>📂</span> <span data-i18n="btn_upload_key">Subir Llave JSON</span>
+          </button>
+          <span id="json-key-status" class="api-status idle">Sin llave</span>
+        </div>
+      </div>
+
+      <!-- GROQ API -->
+      <div class="card model-select-group">
+        <div class="card-title">⚡ Groq AI</div>
+        <div class="form-group">
+          <label>API Key</label>
+          <input type="password" id="groq-key" placeholder="gsk_..." oninput="saveAPIKey('groq')">
+          <span id="groq-status" class="api-status idle" style="margin-top:6px;display:inline-flex;">Sin configurar</span>
+        </div>
+        <div class="form-group">
+          <label data-i18n="lbl_model">Modelo</label>
+          <select id="groq-model" onchange="saveAPIKey('groq')">
+            <optgroup label="🆕 Últimos modelos">
+              <option value="llama-3.3-70b-versatile">Llama 3.3 70B Versatile (Recomendado)</option>
+              <option value="llama-3.1-70b-versatile">Llama 3.1 70B Versatile</option>
+              <option value="llama-3.1-8b-instant">Llama 3.1 8B Instant</option>
+              <option value="llama3-groq-70b-8192-tool-use-preview">Llama 3 70B Tool Use</option>
+              <option value="gemma2-9b-it">Gemma 2 9B IT</option>
+              <option value="mixtral-8x7b-32768">Mixtral 8x7B</option>
+            </optgroup>
+            <optgroup label="📦 Modelos anteriores">
+              <option value="llama3-70b-8192">Llama 3 70B</option>
+              <option value="llama3-8b-8192">Llama 3 8B</option>
+              <option value="llama2-70b-4096">Llama 2 70B</option>
+            </optgroup>
+          </select>
+        </div>
+        <button class="btn btn-secondary btn-sm" onclick="testAPI('groq')" data-i18n="btn_test_api">Probar conexión</button>
+      </div>
+
+      <!-- GEMINI API -->
+      <div class="card model-select-group">
+        <div class="card-title">✨ Google Gemini</div>
+        <div class="form-group">
+          <label>API Key</label>
+          <input type="password" id="gemini-key" placeholder="AIza..." oninput="saveAPIKey('gemini')">
+          <span id="gemini-status" class="api-status idle" style="margin-top:6px;display:inline-flex;">Sin configurar</span>
+        </div>
+        <div class="form-group">
+          <label data-i18n="lbl_model">Modelo</label>
+          <select id="gemini-model" onchange="saveAPIKey('gemini')">
+            <optgroup label="🆕 Últimos modelos">
+              <option value="gemini-2.0-flash">Gemini 2.0 Flash (Recomendado)</option>
+              <option value="gemini-2.0-flash-lite">Gemini 2.0 Flash Lite</option>
+              <option value="gemini-2.5-flash-preview-05-20">Gemini 2.5 Flash Preview</option>
+              <option value="gemini-2.5-pro-preview-06-05">Gemini 2.5 Pro Preview</option>
+              <option value="gemini-1.5-pro">Gemini 1.5 Pro</option>
+              <option value="gemini-1.5-flash">Gemini 1.5 Flash</option>
+            </optgroup>
+            <optgroup label="📦 Modelos anteriores">
+              <option value="gemini-1.0-pro">Gemini 1.0 Pro</option>
+              <option value="gemini-pro">Gemini Pro</option>
+            </optgroup>
+          </select>
+        </div>
+        <button class="btn btn-secondary btn-sm" onclick="testAPI('gemini')" data-i18n="btn_test_api">Probar conexión</button>
+      </div>
+
+      <!-- OPENROUTER API -->
+      <div class="card model-select-group">
+        <div class="card-title">🌐 OpenRouter</div>
+        <div class="form-group">
+          <label>API Key</label>
+          <input type="password" id="openrouter-key" placeholder="sk-or-..." oninput="saveAPIKey('openrouter')">
+          <span id="openrouter-status" class="api-status idle" style="margin-top:6px;display:inline-flex;">Sin configurar</span>
+        </div>
+        <div class="form-group">
+          <label data-i18n="lbl_model">Modelo</label>
+          <select id="openrouter-model" onchange="saveAPIKey('openrouter')">
+            <optgroup label="🆕 Últimos modelos">
+              <option value="meta-llama/llama-3.3-70b-instruct">Llama 3.3 70B Instruct</option>
+              <option value="anthropic/claude-3.5-sonnet">Claude 3.5 Sonnet</option>
+              <option value="anthropic/claude-3.5-haiku">Claude 3.5 Haiku</option>
+              <option value="google/gemini-2.0-flash-001">Gemini 2.0 Flash</option>
+              <option value="google/gemini-2.5-flash-preview">Gemini 2.5 Flash Preview</option>
+              <option value="openai/gpt-4o">GPT-4o</option>
+              <option value="openai/gpt-4o-mini">GPT-4o Mini</option>
+              <option value="deepseek/deepseek-r1">DeepSeek R1</option>
+              <option value="deepseek/deepseek-chat">DeepSeek Chat V3</option>
+              <option value="mistralai/mistral-large">Mistral Large</option>
+              <option value="qwen/qwen-2.5-72b-instruct">Qwen 2.5 72B</option>
+            </optgroup>
+            <optgroup label="📦 Modelos anteriores">
+              <option value="anthropic/claude-3-opus">Claude 3 Opus</option>
+              <option value="anthropic/claude-3-sonnet">Claude 3 Sonnet</option>
+              <option value="openai/gpt-4-turbo">GPT-4 Turbo</option>
+              <option value="meta-llama/llama-3-70b-instruct">Llama 3 70B</option>
+            </optgroup>
+          </select>
+        </div>
+        <button class="btn btn-secondary btn-sm" onclick="testAPI('openrouter')" data-i18n="btn_test_api">Probar conexión</button>
+      </div>
+
+      <!-- ACTIVE API SELECTOR -->
+      <div class="card">
+        <div class="card-title">🎯 <span data-i18n="settings_active_api">API Activa</span></div>
+        <div class="checkbox-group">
+          <label class="checkbox-item" id="active-groq" onclick="setActiveAPI('groq')">⚡ Groq</label>
+          <label class="checkbox-item" id="active-gemini" onclick="setActiveAPI('gemini')">✨ Gemini</label>
+          <label class="checkbox-item" id="active-openrouter" onclick="setActiveAPI('openrouter')">🌐 OpenRouter</label>
+        </div>
+        <div style="margin-top:10px;font-size:0.82rem;color:var(--text2);" data-i18n="settings_active_api_desc">Selecciona qué API usar para generar contenido.</div>
+      </div>
+    </div>
+
+  </div><!-- /main -->
+</div><!-- /layout -->
+
+<script>
+// ============================================================
+// STATE
+// ============================================================
+const APP = {
+  lang: 'es',
+  guideLang: 'es',
+  activeGuideTab: 'tutorials',
+  apis: { groq: '', gemini: '', openrouter: '' },
+  models: { groq: 'llama-3.3-70b-versatile', gemini: 'gemini-2.0-flash', openrouter: 'meta-llama/llama-3.3-70b-instruct' },
+  activeAPI: '',
+  isAdmin: false,
+  notes: [],
+  prompts: [],
+  buttons: [],
+  chatHistory: []
+};
+
+// ============================================================
+// I18N
+// ============================================================
+const I18N = {
+  es: {
+    install: 'Instalar App',
+    nav_content: 'Contenido', nav_story: 'Storytelling Pro', nav_voice: 'Voz & Música',
+    nav_image: 'Imagen & Branding', nav_seo: 'SEO & Assets', nav_campaigns: 'Campañas',
+    nav_chat: 'Chat IA', nav_notes: 'Notas', nav_prompts: 'Prompts',
+    nav_buttons: 'Botones', nav_resources: 'Recursos', nav_guide: 'Guía Premium', nav_settings: 'Ajustes',
+    content_title: 'Generador de Contenido Web & Redes Sociales',
+    tab_prompt: 'Desde Prompt', tab_url: 'Desde URL/Noticia', tab_script: 'Guión YouTube/TikTok',
+    lbl_prompt_topic: 'Prompt / Tema del contenido', lbl_platform: 'Plataforma', lbl_tone: 'Tono',
+    btn_generate: 'Generar Contenido', btn_hashtags: 'Generar Hashtags',
+    output_placeholder: 'El contenido generado aparecerá aquí...',
+    btn_copy: 'Copiar', btn_ext_intro: 'Extender Intro', btn_ext_analysis: 'Extender Análisis',
+    btn_ext_conclusion: 'Extender Conclusión', btn_save_prompt: 'Guardar en Prompts',
+    lbl_url: 'URL de la noticia o artículo', lbl_extra_instructions: 'Instrucciones adicionales (opcional)',
+    btn_analyze: 'Analizar & Generar', lbl_script_topic: 'Tema del guión',
+    lbl_duration: 'Duración objetivo', lbl_style: 'Estilo', btn_gen_script: 'Generar Guión',
+    lbl_story_topic: 'Tema / Historia', lbl_chapters: 'Número de capítulos/segmentos',
+    btn_gen_story: 'Generar Historia', btn_trends: 'Tendencias',
+    story_preview: 'Vista previa de estructura:', story_generate_msg: 'Genera una historia para ver la estructura aquí...',
+    btn_ext_section: 'Extender Sección', btn_regen: 'Regenerar Historia', btn_copy_story: 'Copiar Historia',
+    trends_title: 'Temas Virales & Tendencias', btn_update_trends: 'Actualizar Tendencias',
+    btn_live_trends: 'Tendencias en Vivo (IA)', trends_click_msg: 'Haz clic en "Actualizar Tendencias" para ver temas virales.',
+    narration_title: 'Narración Premium', lbl_narration_text: 'Texto a narrar',
+    lbl_voice_style: 'Estilo de voz', lbl_speed: 'Velocidad', lbl_pitch: 'Tono (pitch)', lbl_neutral: 'Neutro',
+    btn_gen_narration: 'Generar Narración', output_placeholder_narration: 'El guión optimizado para narración aparecerá aquí...',
+    btn_ext_dev: 'Extender Desarrollo', btn_ext_close: 'Extender Cierre',
+    music_title: 'Música & Sound FX', lbl_genre: 'Género musical', lbl_mood: 'Estado de ánimo',
+    music_tools: 'Herramientas de música gratuitas:', sfx_title: 'Sound FX Futuristas:',
+    img_gen_title: 'Generador de Imágenes', lbl_img_prompt: 'Prompt de imagen', lbl_img_preset: 'Preset de estilo',
+    btn_gen_img: 'Generar Imagen (Prompt IA)', output_placeholder_img: 'Prompt optimizado para imagen aparecerá aquí...',
+    btn_copy_prompt: 'Copiar Prompt', branding_title: 'Branding & Logos',
+    lbl_brand_name: 'Nombre de marca / canal', lbl_logo_style: 'Estilo de logo', lbl_colors: 'Colores principales',
+    btn_gen_logo: 'Generar Prompt Logo', btn_gen_banner: 'Generar Banner',
+    output_placeholder_logo: 'Prompt para logo aparecerá aquí...', btn_copy_prompt_logo: 'Copiar Prompt Logo',
+    banner_title: 'Banner Dinámico', lbl_banner_theme: 'Tema del video / temporada',
+    btn_gen_banner_prompt: 'Generar Prompt Banner', output_placeholder_banner: 'Prompt de banner aparecerá aquí...',
+    btn_copy_prompt_banner: 'Copiar Prompt Banner', seo_title: 'Optimización SEO Automática',
+    lbl_seo_keyword: 'Tema / Keyword principal', lbl_language: 'Idioma', btn_gen_seo: 'Generar SEO Completo',
+    output_placeholder_seo: 'Títulos, descripciones y etiquetas SEO aparecerán aquí...',
+    performance_title: 'Análisis de Performance Simulado', metric_engagement: 'Engagement potencial',
+    metric_viral: 'Potencial viral', metric_seo: 'Score SEO', btn_simulate: 'Simular Métricas',
+    lbl_campaign_topic: 'Tema de la campaña', lbl_objective: 'Objetivo',
+    lbl_platforms_include: 'Plataformas incluidas', btn_gen_campaign: 'Generar Campaña',
+    output_placeholder_campaign: 'La estrategia de campaña aparecerá aquí...',
+    btn_export_yt: 'Exportar YouTube', btn_export_tt: 'Exportar TikTok', btn_export_ig: 'Exportar Instagram',
+    chat_locked_title: 'Chat bloqueado', chat_locked_msg: 'Configura al menos una API en Ajustes para desbloquear el chat.',
+    btn_go_settings: 'Ir a Ajustes', chat_expert_label: 'Experto en Redes Sociales & Contenido IA',
+    chat_welcome: '¡Hola! Soy tu asistente experto en redes sociales y creación de contenido con IA. ¿En qué puedo ayudarte hoy? Puedo ayudarte con estrategias de contenido, ideas virales, guiones, SEO, monetización y más.',
+    filter_all: 'Todas', btn_new_folder: '+ Nueva Carpeta', lbl_note_title: 'Título de la nota',
+    lbl_note_color: 'Color:', lbl_note_content: 'Contenido', btn_save_note: 'Guardar Nota',
+    btn_add_prompt: '+ Añadir Prompt', lbl_btn_label: 'Etiqueta del botón',
+    lbl_btn_color: 'Color', lbl_btn_shape: 'Forma', btn_create_btn: 'Crear Botón',
+    btn_copy_html: 'Copiar HTML', btn_clear: 'Limpiar',
+    res_video: 'Edición de Video', res_ai: 'Herramientas IA', res_social: 'Gestión de Redes',
+    output_label: 'Resultado', lbl_model: 'Modelo',
+    settings_json_title: 'Llave de Acceso (JSON)', settings_json_desc: 'Sube tu llave JSON para desbloquear el modo Admin y funciones premium.',
+    btn_upload_key: 'Subir Llave JSON', settings_active_api: 'API Activa',
+    settings_active_api_desc: 'Selecciona qué API usar para generar contenido.', btn_test_api: 'Probar conexión',
+    gtab_tutorials: 'Tutoriales', gtab_examples: 'Ejemplos', gtab_monetization: 'Monetización',
+    gtab_growth: 'Tips de Crecimiento', gtab_policies: 'Políticas & Avisos'
+  },
+  en: {
+    install: 'Install App',
+    nav_content: 'Content', nav_story: 'Storytelling Pro', nav_voice: 'Voice & Music',
+    nav_image: 'Image & Branding', nav_seo: 'SEO & Assets', nav_campaigns: 'Campaigns',
+    nav_chat: 'AI Chat', nav_notes: 'Notes', nav_prompts: 'Prompts',
+    nav_buttons: 'Buttons', nav_resources: 'Resources', nav_guide: 'Premium Guide', nav_settings: 'Settings',
+    content_title: 'Web & Social Media Content Generator',
+    tab_prompt: 'From Prompt', tab_url: 'From URL/News', tab_script: 'YouTube/TikTok Script',
+    lbl_prompt_topic: 'Prompt / Content Topic', lbl_platform: 'Platform', lbl_tone: 'Tone',
+    btn_generate: 'Generate Content', btn_hashtags: 'Generate Hashtags',
+    output_placeholder: 'Generated content will appear here...',
+    btn_copy: 'Copy', btn_ext_intro: 'Extend Intro', btn_ext_analysis: 'Extend Analysis',
+    btn_ext_conclusion: 'Extend Conclusion', btn_save_prompt: 'Save to Prompts',
+    lbl_url: 'News or article URL', lbl_extra_instructions: 'Additional instructions (optional)',
+    btn_analyze: 'Analyze & Generate', lbl_script_topic: 'Script topic',
+    lbl_duration: 'Target duration', lbl_style: 'Style', btn_gen_script: 'Generate Script',
+    lbl_story_topic: 'Topic / Story', lbl_chapters: 'Number of chapters/segments',
+    btn_gen_story: 'Generate Story', btn_trends: 'Trends',
+    story_preview: 'Structure preview:', story_generate_msg: 'Generate a story to see the structure here...',
+    btn_ext_section: 'Extend Section', btn_regen: 'Regenerate Story', btn_copy_story: 'Copy Story',
+    trends_title: 'Viral Topics & Trends', btn_update_trends: 'Update Trends',
+    btn_live_trends: 'Live Trends (AI)', trends_click_msg: 'Click "Update Trends" to see viral topics.',
+    narration_title: 'Premium Narration', lbl_narration_text: 'Text to narrate',
+    lbl_voice_style: 'Voice style', lbl_speed: 'Speed', lbl_pitch: 'Pitch', lbl_neutral: 'Neutral',
+    btn_gen_narration: 'Generate Narration', output_placeholder_narration: 'Optimized narration script will appear here...',
+    btn_ext_dev: 'Extend Development', btn_ext_close: 'Extend Closing',
+    music_title: 'Music & Sound FX', lbl_genre: 'Music genre', lbl_mood: 'Mood',
+    music_tools: 'Free music tools:', sfx_title: 'Futuristic Sound FX:',
+    img_gen_title: 'Image Generator', lbl_img_prompt: 'Image prompt', lbl_img_preset: 'Style preset',
+    btn_gen_img: 'Generate Image (AI Prompt)', output_placeholder_img: 'Optimized image prompt will appear here...',
+    btn_copy_prompt: 'Copy Prompt', branding_title: 'Branding & Logos',
+    lbl_brand_name: 'Brand / channel name', lbl_logo_style: 'Logo style', lbl_colors: 'Main colors',
+    btn_gen_logo: 'Generate Logo Prompt', btn_gen_banner: 'Generate Banner',
+    output_placeholder_logo: 'Logo prompt will appear here...', btn_copy_prompt_logo: 'Copy Logo Prompt',
+    banner_title: 'Dynamic Banner', lbl_banner_theme: 'Video / season theme',
+    btn_gen_banner_prompt: 'Generate Banner Prompt', output_placeholder_banner: 'Banner prompt will appear here...',
+    btn_copy_prompt_banner: 'Copy Banner Prompt', seo_title: 'Automatic SEO Optimization',
+    lbl_seo_keyword: 'Topic / Main keyword', lbl_language: 'Language', btn_gen_seo: 'Generate Full SEO',
+    output_placeholder_seo: 'Titles, descriptions and SEO tags will appear here...',
+    performance_title: 'Simulated Performance Analysis', metric_engagement: 'Potential engagement',
+    metric_viral: 'Viral potential', metric_seo: 'SEO Score', btn_simulate: 'Simulate Metrics',
+    lbl_campaign_topic: 'Campaign topic', lbl_objective: 'Objective',
+    lbl_platforms_include: 'Included platforms', btn_gen_campaign: 'Generate Campaign',
+    output_placeholder_campaign: 'Campaign strategy will appear here...',
+    btn_export_yt: 'Export YouTube', btn_export_tt: 'Export TikTok', btn_export_ig: 'Export Instagram',
+    chat_locked_title: 'Chat locked', chat_locked_msg: 'Configure at least one API in Settings to unlock the chat.',
+    btn_go_settings: 'Go to Settings', chat_expert_label: 'Social Media & AI Content Expert',
+    chat_welcome: 'Hi! I am your expert assistant in social media and AI content creation. How can I help you today? I can help with content strategies, viral ideas, scripts, SEO, monetization and more.',
+    filter_all: 'All', btn_new_folder: '+ New Folder', lbl_note_title: 'Note title',
+    lbl_note_color: 'Color:', lbl_note_content: 'Content', btn_save_note: 'Save Note',
+    btn_add_prompt: '+ Add Prompt', lbl_btn_label: 'Button label',
+    lbl_btn_color: 'Color', lbl_btn_shape: 'Shape', btn_create_btn: 'Create Button',
+    btn_copy_html: 'Copy HTML', btn_clear: 'Clear',
+    res_video: 'Video Editing', res_ai: 'AI Tools', res_social: 'Social Media Management',
+    output_label: 'Result', lbl_model: 'Model',
+    settings_json_title: 'Access Key (JSON)', settings_json_desc: 'Upload your JSON key to unlock Admin mode and premium features.',
+    btn_upload_key: 'Upload JSON Key', settings_active_api: 'Active API',
+    settings_active_api_desc: 'Select which API to use for content generation.', btn_test_api: 'Test connection',
+    gtab_tutorials: 'Tutorials', gtab_examples: 'Examples', gtab_monetization: 'Monetization',
+    gtab_growth: 'Growth Tips', gtab_policies: 'Policies & Notices'
+  },
+  zh: {
+    install: '安装应用',
+    nav_content: '内容', nav_story: '故事创作专业版', nav_voice: '语音与音乐',
+    nav_image: '图像与品牌', nav_seo: 'SEO与资产', nav_campaigns: '营销活动',
+    nav_chat: 'AI聊天', nav_notes: '笔记', nav_prompts: '提示词',
+    nav_buttons: '按钮', nav_resources: '资源', nav_guide: '高级指南', nav_settings: '设置',
+    content_title: '网络与社交媒体内容生成器',
+    tab_prompt: '从提示词', tab_url: '从URL/新闻', tab_script: 'YouTube/TikTok脚本',
+    lbl_prompt_topic: '提示词/内容主题', lbl_platform: '平台', lbl_tone: '语调',
+    btn_generate: '生成内容', btn_hashtags: '生成话题标签',
+    output_placeholder: '生成的内容将显示在这里...',
+    btn_copy: '复制', btn_ext_intro: '扩展简介', btn_ext_analysis: '扩展分析',
+    btn_ext_conclusion: '扩展结论', btn_save_prompt: '保存到提示词',
+    lbl_url: '新闻或文章URL', lbl_extra_instructions: '附加说明（可选）',
+    btn_analyze: '分析并生成', lbl_script_topic: '脚本主题',
+    lbl_duration: '目标时长', lbl_style: '风格', btn_gen_script: '生成脚本',
+    lbl_story_topic: '主题/故事', lbl_chapters: '章节/片段数量',
+    btn_gen_story: '生成故事', btn_trends: '趋势',
+    story_preview: '结构预览：', story_generate_msg: '生成故事以在此处查看结构...',
+    btn_ext_section: '扩展章节', btn_regen: '重新生成故事', btn_copy_story: '复制故事',
+    trends_title: '病毒话题与趋势', btn_update_trends: '更新趋势',
+    btn_live_trends: '实时趋势（AI）', trends_click_msg: '点击"更新趋势"查看热门话题。',
+    narration_title: '高级旁白', lbl_narration_text: '要旁白的文本',
+    lbl_voice_style: '语音风格', lbl_speed: '速度', lbl_pitch: '音调', lbl_neutral: '中性',
+    btn_gen_narration: '生成旁白', output_placeholder_narration: '优化的旁白脚本将显示在这里...',
+    btn_ext_dev: '扩展发展', btn_ext_close: '扩展结尾',
+    music_title: '音乐与音效', lbl_genre: '音乐类型', lbl_mood: '情绪',
+    music_tools: '免费音乐工具：', sfx_title: '未来主义音效：',
+    img_gen_title: '图像生成器', lbl_img_prompt: '图像提示词', lbl_img_preset: '风格预设',
+    btn_gen_img: '生成图像（AI提示词）', output_placeholder_img: '优化的图像提示词将显示在这里...',
+    btn_copy_prompt: '复制提示词', branding_title: '品牌与标志',
+    lbl_brand_name: '品牌/频道名称', lbl_logo_style: '标志风格', lbl_colors: '主要颜色',
+    btn_gen_logo: '生成标志提示词', btn_gen_banner: '生成横幅',
+    output_placeholder_logo: '标志提示词将显示在这里...', btn_copy_prompt_logo: '复制标志提示词',
+    banner_title: '动态横幅', lbl_banner_theme: '视频/季节主题',
+    btn_gen_banner_prompt: '生成横幅提示词', output_placeholder_banner: '横幅提示词将显示在这里...',
+    btn_copy_prompt_banner: '复制横幅提示词', seo_title: '自动SEO优化',
+    lbl_seo_keyword: '主题/主要关键词', lbl_language: '语言', btn_gen_seo: '生成完整SEO',
+    output_placeholder_seo: '标题、描述和SEO标签将显示在这里...',
+    performance_title: '模拟性能分析', metric_engagement: '潜在互动率',
+    metric_viral: '病毒传播潜力', metric_seo: 'SEO评分', btn_simulate: '模拟指标',
+    lbl_campaign_topic: '营销活动主题', lbl_objective: '目标',
+    lbl_platforms_include: '包含的平台', btn_gen_campaign: '生成营销活动',
+    output_placeholder_campaign: '营销策略将显示在这里...',
+    btn_export_yt: '导出YouTube', btn_export_tt: '导出TikTok', btn_export_ig: '导出Instagram',
+    chat_locked_title: '聊天已锁定', chat_locked_msg: '在设置中配置至少一个API以解锁聊天。',
+    btn_go_settings: '前往设置', chat_expert_label: '社交媒体与AI内容专家',
+    chat_welcome: '你好！我是您的社交媒体和AI内容创作专家助手。今天我能帮您做什么？我可以帮助内容策略、病毒式创意、脚本、SEO、变现等。',
+    filter_all: '全部', btn_new_folder: '+ 新建文件夹', lbl_note_title: '笔记标题',
+    lbl_note_color: '颜色：', lbl_note_content: '内容', btn_save_note: '保存笔记',
+    btn_add_prompt: '+ 添加提示词', lbl_btn_label: '按钮标签',
+    lbl_btn_color: '颜色', lbl_btn_shape: '形状', btn_create_btn: '创建按钮',
+    btn_copy_html: '复制HTML', btn_clear: '清除',
+    res_video: '视频编辑', res_ai: 'AI工具', res_social: '社交媒体管理',
+    output_label: '结果', lbl_model: '模型',
+    settings_json_title: '访问密钥（JSON）', settings_json_desc: '上传您的JSON密钥以解锁管理员模式和高级功能。',
+    btn_upload_key: '上传JSON密钥', settings_active_api: '活跃API',
+    settings_active_api_desc: '选择用于内容生成的API。', btn_test_api: '测试连接',
+    gtab_tutorials: '教程', gtab_examples: '示例', gtab_monetization: '变现',
+    gtab_growth: '增长技巧', gtab_policies: '政策与声明'
+  }
+};
+
+// GUIDE CONTENT DATA
+const GUIDE_DATA = {
+  tutorials: {
+    es: [
+      { title: '🚀 Cómo usar el Generador de Contenido', body: 'Ve a "Contenido", escribe tu tema, selecciona plataforma y tono, y pulsa "Generar Contenido". El sistema usará tu API configurada para crear contenido optimizado.' },
+      { title: '🎙️ Crear narración profesional', body: 'Usa la sección "Voz & Música" para optimizar tu texto para narración. Selecciona estilo de voz y velocidad, luego usa LuvVoice o ElevenLabs para convertir a audio.' },
+      { title: '📊 Optimizar SEO automáticamente', body: 'En "SEO & Assets", ingresa tu keyword principal, selecciona plataforma e idioma. La IA generará títulos, descripciones y etiquetas optimizadas.' },
+      { title: '🎨 Generar prompts de imágenes', body: 'En "Imagen & Branding", describe tu imagen o usa un preset. El prompt generado es compatible con Midjourney, DALL-E, Stable Diffusion e Ideogram.' },
+      { title: '⚙️ Configurar tus APIs', body: 'Ve a "Ajustes" y añade tus claves de Groq, Gemini o OpenRouter. Selecciona el modelo y la API activa. Todas las funciones de generación usarán la API seleccionada.' }
+    ],
+    en: [
+      { title: '🚀 How to use the Content Generator', body: 'Go to "Content", write your topic, select platform and tone, and click "Generate Content". The system will use your configured API to create optimized content.' },
+      { title: '🎙️ Create professional narration', body: 'Use the "Voice & Music" section to optimize your text for narration. Select voice style and speed, then use LuvVoice or ElevenLabs to convert to audio.' },
+      { title: '📊 Automatically optimize SEO', body: 'In "SEO & Assets", enter your main keyword, select platform and language. The AI will generate optimized titles, descriptions and tags.' },
+      { title: '🎨 Generate image prompts', body: 'In "Image & Branding", describe your image or use a preset. The generated prompt is compatible with Midjourney, DALL-E, Stable Diffusion and Ideogram.' },
+      { title: '⚙️ Configure your APIs', body: 'Go to "Settings" and add your Groq, Gemini or OpenRouter keys. Select the model and active API. All generation functions will use the selected API.' }
+    ],
+    zh: [
+      { title: '🚀 如何使用内容生成器', body: '前往"内容"，写下您的主题，选择平台和语调，然后点击"生成内容"。系统将使用您配置的API创建优化内容。' },
+      { title: '🎙️ 创建专业旁白', body: '使用"语音与音乐"部分优化您的旁白文本。选择语音风格和速度，然后使用LuvVoice或ElevenLabs转换为音频。' },
+      { title: '📊 自动优化SEO', body: '在"SEO与资产"中，输入您的主要关键词，选择平台和语言。AI将生成优化的标题、描述和标签。' },
+      { title: '🎨 生成图像提示词', body: '在"图像与品牌"中，描述您的图像或使用预设。生成的提示词与Midjourney、DALL-E、Stable Diffusion和Ideogram兼容。' },
+      { title: '⚙️ 配置您的API', body: '前往"设置"并添加您的Groq、Gemini或OpenRouter密钥。选择模型和活跃API。所有生成功能将使用所选API。' }
+    ]
+  },
+  examples: {
+    es: [
+      { title: '📱 Ejemplo: Post viral de Instagram', body: 'Tema: "5 errores que cometen los emprendedores" · Plataforma: Instagram · Tono: Casual · Resultado: Carrusel con hooks poderosos, emojis estratégicos y llamada a la acción.' },
+      { title: '🎬 Ejemplo: Guión TikTok 60 segundos', body: 'Tema: "Cómo usar ChatGPT para ganar dinero" · Duración: Corto · Estilo: Educativo · Resultado: Hook impactante + 3 puntos clave + CTA en 60 segundos.' },
+      { title: '📖 Ejemplo: Historia para YouTube', body: 'Tema: "De 0 a 100K suscriptores en 6 meses" · Plataforma: YouTube · Capítulos: 4 · Resultado: Estructura narrativa con gancho, conflicto, desarrollo y resolución.' },
+      { title: '🔍 Ejemplo: SEO para blog', body: 'Keyword: "marketing digital 2025" · Plataforma: Blog · Resultado: Título SEO, meta descripción de 160 caracteres, 15 etiquetas long-tail y estructura H1/H2.' }
+    ],
+    en: [
+      { title: '📱 Example: Viral Instagram Post', body: 'Topic: "5 mistakes entrepreneurs make" · Platform: Instagram · Tone: Casual · Result: Carousel with powerful hooks, strategic emojis and call to action.' },
+      { title: '🎬 Example: 60-second TikTok Script', body: 'Topic: "How to use ChatGPT to make money" · Duration: Short · Style: Educational · Result: Impactful hook + 3 key points + CTA in 60 seconds.' },
+      { title: '📖 Example: YouTube Story', body: 'Topic: "From 0 to 100K subscribers in 6 months" · Platform: YouTube · Chapters: 4 · Result: Narrative structure with hook, conflict, development and resolution.' },
+      { title: '🔍 Example: Blog SEO', body: 'Keyword: "digital marketing 2025" · Platform: Blog · Result: SEO title, 160-character meta description, 15 long-tail tags and H1/H2 structure.' }
+    ],
+    zh: [
+      { title: '📱 示例：病毒式Instagram帖子', body: '主题："企业家犯的5个错误" · 平台：Instagram · 语调：休闲 · 结果：带有强力钩子、战略性表情符号和行动号召的轮播图。' },
+      { title: '🎬 示例：60秒TikTok脚本', body: '主题："如何用ChatGPT赚钱" · 时长：短 · 风格：教育性 · 结果：60秒内的震撼钩子+3个要点+CTA。' },
+      { title: '📖 示例：YouTube故事', body: '主题："6个月从0到10万订阅者" · 平台：YouTube · 章节：4 · 结果：带有钩子、冲突、发展和解决的叙事结构。' },
+      { title: '🔍 示例：博客SEO', body: '关键词："2025年数字营销" · 平台：博客 · 结果：SEO标题、160字符元描述、15个长尾标签和H1/H2结构。' }
+    ]
+  },
+  monetization: {
+    es: [
+      { title: '💰 Monetización con YouTube', body: 'Alcanza 1,000 suscriptores y 4,000 horas de visualización para el Programa de Socios. Usa esta app para crear contenido consistente y optimizado que acelere tu crecimiento.' },
+      { title: '🛍️ Marketing de afiliados', body: 'Crea contenido de review y tutorial usando los generadores. Incluye links de afiliado en descripciones. El SEO automático aumenta el tráfico orgánico a tus contenidos.' },
+      { title: '📦 Vender productos digitales', body: 'Usa el Storytelling Pro para crear historias de marca convincentes. Genera campañas multiplataforma para lanzar cursos, ebooks o templates.' },
+      { title: '🤝 Servicios de gestión de contenido', body: 'Usa esta app para ofrecer servicios de creación de contenido a empresas. Genera contenido para múltiples clientes de forma eficiente con las APIs de IA.' }
+    ],
+    en: [
+      { title: '💰 YouTube Monetization', body: 'Reach 1,000 subscribers and 4,000 watch hours for the Partner Program. Use this app to create consistent, optimized content that accelerates your growth.' },
+      { title: '🛍️ Affiliate Marketing', body: 'Create review and tutorial content using the generators. Include affiliate links in descriptions. Automatic SEO increases organic traffic to your content.' },
+      { title: '📦 Sell Digital Products', body: 'Use Storytelling Pro to create compelling brand stories. Generate multi-platform campaigns to launch courses, ebooks or templates.' },
+      { title: '🤝 Content Management Services', body: 'Use this app to offer content creation services to businesses. Efficiently generate content for multiple clients with AI APIs.' }
+    ],
+    zh: [
+      { title: '💰 YouTube变现', body: '达到1,000名订阅者和4,000小时观看时长以加入合作伙伴计划。使用此应用创建一致的优化内容，加速您的增长。' },
+      { title: '🛍️ 联盟营销', body: '使用生成器创建评测和教程内容。在描述中包含联盟链接。自动SEO增加您内容的自然流量。' },
+      { title: '📦 销售数字产品', body: '使用故事创作专业版创建引人注目的品牌故事。生成多平台营销活动以推出课程、电子书或模板。' },
+      { title: '🤝 内容管理服务', body: '使用此应用为企业提供内容创作服务。通过AI API高效地为多个客户生成内容。' }
+    ]
+  },
+  growth: {
+    es: [
+      { title: '📈 Consistencia es la clave', body: 'Publica al menos 3-5 veces por semana en TikTok/Instagram y 1-2 veces en YouTube. Usa el generador de contenido para mantener un flujo constante sin agotarte.' },
+      { title: '🔥 Aprovecha las tendencias', body: 'Usa la sección de Tendencias para identificar temas virales. Crea contenido sobre tendencias en las primeras 24-48 horas para maximizar el alcance.' },
+      { title: '🎯 Optimiza para el algoritmo', body: 'Usa el SEO automático para cada pieza de contenido. Los primeros 3 segundos son cruciales en TikTok/Reels. Usa hooks poderosos generados por la IA.' },
+      { title: '🤝 Colaboraciones estratégicas', body: 'Usa el Storytelling Pro para crear propuestas de colaboración convincentes. Las colaboraciones pueden multiplicar tu audiencia exponencialmente.' },
+      { title: '📊 Analiza y ajusta', body: 'Usa el simulador de métricas para estimar el potencial de tu contenido antes de publicar. Ajusta el tono y plataforma según los resultados.' }
+    ],
+    en: [
+      { title: '📈 Consistency is key', body: 'Post at least 3-5 times per week on TikTok/Instagram and 1-2 times on YouTube. Use the content generator to maintain a constant flow without burning out.' },
+      { title: '🔥 Leverage trends', body: 'Use the Trends section to identify viral topics. Create trend content in the first 24-48 hours to maximize reach.' },
+      { title: '🎯 Optimize for the algorithm', body: 'Use automatic SEO for every piece of content. The first 3 seconds are crucial on TikTok/Reels. Use powerful AI-generated hooks.' },
+      { title: '🤝 Strategic collaborations', body: 'Use Storytelling Pro to create compelling collaboration proposals. Collaborations can multiply your audience exponentially.' },
+      { title: '📊 Analyze and adjust', body: 'Use the metrics simulator to estimate your content\'s potential before publishing. Adjust tone and platform based on results.' }
+    ],
+    zh: [
+      { title: '📈 一致性是关键', body: '在TikTok/Instagram上每周至少发布3-5次，在YouTube上发布1-2次。使用内容生成器保持持续的内容流而不会精疲力竭。' },
+      { title: '🔥 利用趋势', body: '使用趋势部分识别病毒式话题。在前24-48小时内创建趋势内容以最大化覆盖范围。' },
+      { title: '🎯 为算法优化', body: '对每条内容使用自动SEO。前3秒在TikTok/Reels中至关重要。使用AI生成的强力钩子。' },
+      { title: '🤝 战略合作', body: '使用故事创作专业版创建引人注目的合作提案。合作可以指数级地扩大您的受众。' },
+      { title: '📊 分析和调整', body: '在发布前使用指标模拟器估计内容潜力。根据结果调整语调和平台。' }
+    ]
+  },
+  policies: {
+    es: [
+      { title: '📋 Términos de Uso', body: 'DULA CREATOR es una herramienta de asistencia para creación de contenido. El usuario es responsable del contenido generado y de cumplir con las políticas de cada plataforma (YouTube, TikTok, Instagram, etc.).' },
+      { title: '🔒 Privacidad de API Keys', body: 'Tus claves de API se almacenan localmente en tu navegador (localStorage). Nunca se envían a servidores de terceros excepto directamente a los proveedores de API (Groq, Google, OpenRouter).' },
+      { title: '⚠️ Aviso de Contenido IA', body: 'El contenido generado por IA puede contener inexactitudes. Siempre revisa y edita el contenido antes de publicarlo. No uses la herramienta para generar contenido engañoso, de odio o que infrinja derechos de autor.' },
+      { title: '🌐 Políticas de Plataformas', body: 'Asegúrate de cumplir con las políticas de YouTube, TikTok, Instagram y otras plataformas. El uso de IA para generar contenido está permitido siempre que sea transparente y cumpla las normas comunitarias.' }
+    ],
+    en: [
+      { title: '📋 Terms of Use', body: 'DULA CREATOR is a content creation assistance tool. The user is responsible for the generated content and for complying with the policies of each platform (YouTube, TikTok, Instagram, etc.).' },
+      { title: '🔒 API Key Privacy', body: 'Your API keys are stored locally in your browser (localStorage). They are never sent to third-party servers except directly to API providers (Groq, Google, OpenRouter).' },
+      { title: '⚠️ AI Content Notice', body: 'AI-generated content may contain inaccuracies. Always review and edit content before publishing. Do not use the tool to generate misleading, hateful or copyright-infringing content.' },
+      { title: '🌐 Platform Policies', body: 'Ensure compliance with YouTube, TikTok, Instagram and other platform policies. Using AI to generate content is permitted as long as it is transparent and complies with community guidelines.' }
+    ],
+    zh: [
+      { title: '📋 使用条款', body: 'DULA CREATOR是一个内容创作辅助工具。用户对生成的内容负责，并需遵守每个平台（YouTube、TikTok、Instagram等）的政策。' },
+      { title: '🔒 API密钥隐私', body: '您的API密钥存储在您的浏览器本地（localStorage）。除直接发送给API提供商（Groq、Google、OpenRouter）外，绝不会发送到第三方服务器。' },
+      { title: '⚠️ AI内容声明', body: 'AI生成的内容可能包含不准确之处。发布前请务必审查和编辑内容。请勿使用该工具生成误导性、仇恨性或侵犯版权的内容。' },
+      { title: '🌐 平台政策', body: '确保遵守YouTube、TikTok、Instagram和其他平台的政策。使用AI生成内容是允许的，只要透明并遵守社区准则。' }
+    ]
+  }
+};
+
+// ============================================================
+// INIT
+// ============================================================
+window.addEventListener('DOMContentLoaded', () => {
+  loadFromStorage();
+  applyLang('es');
+  renderGuide('tutorials');
+  updateChatView();
+  renderNotes();
+  renderPrompts();
+});
+
+function loadFromStorage() {
+  const saved = localStorage.getItem('dula_app');
+  if (saved) {
+    const data = JSON.parse(saved);
+    APP.apis = data.apis || APP.apis;
+    APP.models = data.models || APP.models;
+    APP.activeAPI = data.activeAPI || '';
+    APP.isAdmin = data.isAdmin || false;
+    APP.notes = data.notes || [];
+    APP.prompts = data.prompts || [];
+    APP.lang = data.lang || 'es';
+    APP.buttons = data.buttons || [];
+  }
+  // Restore API inputs
+  if (APP.apis.groq) document.getElementById('groq-key').value = APP.apis.groq;
+  if (APP.apis.gemini) document.getElementById('gemini-key').value = APP.apis.gemini;
+  if (APP.apis.openrouter) document.getElementById('openrouter-key').value = APP.apis.openrouter;
+  // Restore models
+  if (APP.models.groq) document.getElementById('groq-model').value = APP.models.groq;
+  if (APP.models.gemini) document.getElementById('gemini-model').value = APP.models.gemini;
+  if (APP.models.openrouter) document.getElementById('openrouter-model').value = APP.models.openrouter;
+  // Update statuses
+  updateAPIStatuses();
+  if (APP.isAdmin) document.getElementById('adminBadge').classList.add('show');
+  // Restore active API highlight
+  if (APP.activeAPI) {
+    document.querySelectorAll('[id^="active-"]').forEach(el => el.classList.remove('checked'));
+    const el = document.getElementById('active-' + APP.activeAPI);
+    if (el) el.classList.add('checked');
+  }
+  // Restore buttons
+  APP.buttons.forEach(b => renderButtonInPreview(b));
+}
+
+function saveToStorage() {
+  localStorage.setItem('dula_app', JSON.stringify({
+    apis: APP.apis, models: APP.models, activeAPI: APP.activeAPI,
+    isAdmin: APP.isAdmin, notes: APP.notes, prompts: APP.prompts,
+    lang: APP.lang, buttons: APP.buttons
+  }));
+}
+
+// ============================================================
+// LANG
+// ============================================================
+function setLang(lang) {
+  APP.lang = lang;
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('btn-lang-' + lang).classList.add('active');
+  applyLang(lang);
+  saveToStorage();
+}
+
+function applyLang(lang) {
+  const t = I18N[lang] || I18N.es;
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    if (t[key]) el.textContent = t[key];
+  });
+}
+
+// ============================================================
+// NAVIGATION
+// ============================================================
+function showSection(name) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('section-' + name).classList.add('active');
+  document.querySelector('[data-section="' + name + '"]').classList.add('active');
+  if (name === 'chat') updateChatView();
+}
+
+function switchTab(section, tab) {
+  const tabs = document.querySelectorAll('#section-' + section + ' .tab');
+  tabs.forEach(t => t.classList.remove('active'));
+  event.target.classList.add('active');
+  // Hide all tab contents
+  ['prompt','url','script'].forEach(t => {
+    const el = document.getElementById(section + '-tab-' + t);
+    if (el) el.style.display = 'none';
+  });
+  const target = document.getElementById(section + '-tab-' + tab);
+  if (target) target.style.display = 'block';
+}
+
+// ============================================================
+// GUIDE
+// ============================================================
+function setGuideLang(lang) {
+  APP.guideLang = lang;
+  document.querySelectorAll('[id^="guide-lang-"]').forEach(b => b.classList.remove('active'));
+  document.getElementById('guide-lang-' + lang).classList.add('active');
+  renderGuide(APP.activeGuideTab);
+  // Update tab labels
+  const t = I18N[lang] || I18N.es;
+  document.querySelectorAll('.guide-tab-label').forEach(el => {
+    const key = el.getAttribute('data-key');
+    if (t[key]) el.textContent = t[key];
+  });
+}
+
+function switchGuideTab(tab) {
+  APP.activeGuideTab = tab;
+  document.querySelectorAll('.guide-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('gtab-' + tab).classList.add('active');
+  document.querySelectorAll('.guide-content').forEach(c => c.classList.remove('active'));
+  document.getElementById('guide-' + tab).classList.add('active');
+  renderGuide(tab);
+}
+
+function renderGuide(tab) {
+  const lang = APP.guideLang || 'es';
+  const items = (GUIDE_DATA[tab] && GUIDE_DATA[tab][lang]) || [];
+  const container = document.getElementById('guide-' + tab);
+  if (!container) return;
+  container.innerHTML = items.map(item => `
+    <div class="guide-card">
+      <h4>${item.title}</h4>
+      <p>${item.body}</p>
+    </div>
+  `).join('');
+}
+
+// ============================================================
+// API MANAGEMENT
+// ============================================================
+function saveAPIKey(provider) {
+  const keyEl = document.getElementById(provider + '-key');
+  const modelEl = document.getElementById(provider + '-model');
+  if (keyEl) APP.apis[provider] = keyEl.value.trim();
+  if (modelEl) APP.models[provider] = modelEl.value;
+  updateAPIStatuses();
+  saveToStorage();
+  // Auto-select if first API configured
+  if (APP.apis[provider] && !APP.activeAPI) {
+    setActiveAPI(provider);
+  }
+  updateChatView();
+  // Show unlock popup if API is set
+  if (APP.apis[provider] && APP.apis[provider].length > 10) {
+    showAPIUnlockPopup(provider);
+  }
+}
+
+function setActiveAPI(provider) {
+  APP.activeAPI = provider;
+  document.querySelectorAll('[id^="active-"]').forEach(el => el.classList.remove('checked'));
+  const el = document.getElementById('active-' + provider);
+  if (el) el.classList.add('checked');
+  saveToStorage();
+  updateChatView();
+}
+
+function updateAPIStatuses() {
+  ['groq','gemini','openrouter'].forEach(p => {
+    const statusEl = document.getElementById(p + '-status');
+    if (!statusEl) return;
+    if (APP.apis[p] && APP.apis[p].length > 5) {
+      statusEl.className = 'api-status ok';
+      statusEl.textContent = '✓ Configurado';
+    } else {
+      statusEl.className = 'api-status idle';
+      statusEl.textContent = 'Sin configurar';
+    }
+  });
+}
+
+function showAPIUnlockPopup(provider) {
+  const names = { groq: 'Groq AI', gemini: 'Google Gemini', openrouter: 'OpenRouter' };
+  const t = I18N[APP.lang] || I18N.es;
+  document.getElementById('popupTitle').textContent = '🔓 API Desbloqueada';
+  document.getElementById('popupSubtitle').textContent = `${names[provider]} conectado correctamente`;
+  const features = [
+    '✅ Generador de Contenido',
+    '✅ Storytelling Pro',
+    '✅ Narración & Guiones',
+    '✅ SEO Automático',
+    '✅ Campañas Multiplataforma',
+    '✅ Chat IA Agéntico',
+    '✅ Tendencias en Vivo'
+  ];
+  document.getElementById('unlockList').innerHTML = features.map(f => `<li>${f}</li>`).join('');
+  document.getElementById('unlockPopup').style.display = 'flex';
+}
+
+function closePopup() {
+  document.getElementById('unlockPopup').style.display = 'none';
+}
+
+async function testAPI(provider) {
+  if (!APP.apis[provider]) { showToast('Primero configura la API Key', 'error'); return; }
+  showToast('Probando conexión...', '');
+  try {
+    const result = await callAI('Responde solo "OK"', provider);
+    if (result) {
+      document.getElementById(provider + '-status').className = 'api-status ok';
+      document.getElementById(provider + '-status').textContent = '✓ Conectado';
+      showToast('✓ ' + provider + ' conectado correctamente', 'success');
+    }
+  } catch(e) {
+    document.getElementById(provider + '-status').className = 'api-status err';
+    document.getElementById(provider + '-status').textContent = '✗ Error';
+    showToast('Error: ' + e.message, 'error');
+  }
+}
+
+// ============================================================
+// JSON KEY
+// ============================================================
+function loadJSONKey(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const data = JSON.parse(e.target.result);
+      const validRoles = ['admin', 'premium', 'pro'];
+      const validApps = ['DULA Content Creator', 'DULA CREATOR'];
+      if (data.role && validRoles.includes(data.role) && data.app && validApps.some(a => data.app.includes(a.split(' ')[0]))) {
+        APP.isAdmin = true;
+        document.getElementById('adminBadge').classList.add('show');
+        document.getElementById('json-key-status').className = 'api-status ok';
+        document.getElementById('json-key-status').textContent = '✓ Admin desbloqueado';
+        saveToStorage();
+        showAdminUnlockPopup(data);
+      } else {
+        document.getElementById('json-key-status').className = 'api-status err';
+        document.getElementById('json-key-status').textContent = '✗ Llave inválida';
+        showToast('La llave JSON no es válida para esta app', 'error');
+      }
+    } catch(ex) {
+      showToast('Error al leer el archivo JSON', 'error');
+    }
+  };
+  reader.readAsText(file);
+}
+
+function showAdminUnlockPopup(data) {
+  document.getElementById('popupTitle').textContent = '👑 Modo Admin Desbloqueado';
+  document.getElementById('popupSubtitle').textContent = `Bienvenido, ${data.role.toUpperCase()} · v${data.version || '2026'}`;
+  const features = [
+    '👑 Panel de Administrador',
+    '✅ Todas las funciones premium',
+    '✅ Sin límites de generación',
+    '✅ Exportación avanzada',
+    '✅ Modelos de IA premium',
+    '✅ Guía Premium completa',
+    '✅ Soporte prioritario'
+  ];
+  document.getElementById('unlockList').innerHTML = features.map(f => `<li>${f}</li>`).join('');
+  document.getElementById('unlockPopup').style.display = 'flex';
+}
+
+// ============================================================
+// AI CALL ENGINE
+// ============================================================
+async function callAI(prompt, forceProvider) {
+  const provider = forceProvider || APP.activeAPI;
+  if (!provider || !APP.apis[provider]) {
+    throw new Error('No hay API configurada. Ve a Ajustes.');
+  }
+  const key = APP.apis[provider];
+  const model = APP.models[provider];
+
+  if (provider === 'groq') {
+    const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method: 'POST',
+      headers: { 'Authorization': 'Bearer ' + key, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: model,
+        messages: [{ role: 'user', content: prompt }],
+        max_tokens: 2048,
+        temperature: 0.8
+      })
+    });
+    if (!res.ok) { const err = await res.json(); throw new Error(err.error?.message || 'Error Groq'); }
+    const data = await res.json();
+    return data.choices[0].message.content;
+  }
+
+  if (provider === 'gemini') {
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key}`;
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: prompt }] }],
+        generationConfig: { maxOutputTokens: 2048, temperature: 0.8 }
+      })
+    });
+    if (!res.ok) { const err = await res.json(); throw new Error(err.error?.message || 'Error Gemini'); }
+    const data = await res.json();
+    return data.candidates[0].content.parts[0].text;
+  }
+
+  if (provider === 'openrouter') {
+    const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': 'Bearer ' + key,
+        'Content-Type': 'application/json',
+        'HTTP-Referer': window.location.href,
+        'X-Title': 'DULA CREATOR'
+      },
+      body: JSON.stringify({
+        model: model,
+        messages: [{ role: 'user', content: prompt }],
+        max_tokens: 2048,
+        temperature: 0.8
+      })
+    });
+    if (!res.ok) { const err = await res.json(); throw new Error(err.error?.message || 'Error OpenRouter'); }
+    const data = await res.json();
+    return data.choices[0].message.content;
+  }
+
+  throw new Error('Proveedor no soportado');
+}
+
+function checkAPIReady() {
+  if (!APP.activeAPI || !APP.apis[APP.activeAPI]) {
+    showToast('⚙️ Configura una API en Ajustes primero', 'error');
+    setTimeout(() => showSection('settings'), 1500);
+    return false;
+  }
+  return true;
+}
+
+function setOutputLoading(id) {
+  const el = document.getElementById(id);
+  if (el) el.innerHTML = '<div style="display:flex;align-items:center;gap:10px;color:var(--text2);"><div class="spinner"></div> Generando con IA...</div>';
+}
+
+function setOutput(id, text) {
+  const el = document.getElementById(id);
+  if (el) el.textContent = text;
+}
+
+// ============================================================
+// CONTENT GENERATORS
+// ============================================================
+async function generateContent() {
+  if (!checkAPIReady()) return;
+  const prompt = document.getElementById('c-prompt').value.trim();
+  if (!prompt) { showToast('Escribe un tema o prompt', 'error'); return; }
+  const platform = document.getElementById('c-platform').value;
+  const tone = document.getElementById('c-tone').value;
+  setOutputLoading('content-output');
+  try {
+    const aiPrompt = `Eres un experto en marketing digital y creación de contenido para redes sociales. 
+Crea contenido optimizado para ${platform} con tono ${tone} sobre: "${prompt}".
+El contenido debe ser viral, atractivo y listo para publicar. 
+Incluye: título llamativo, cuerpo del contenido bien estructurado, y llamada a la acción.
+Si es para Instagram o TikTok, hazlo corto y con emojis. Si es para Blog/YouTube, más extenso.`;
+    const result = await callAI(aiPrompt);
+    setOutput('content-output', result);
+  } catch(e) {
+    setOutput('content-output', '❌ Error: ' + e.message);
+    showToast(e.message, 'error');
+  }
+}
+
+async function generateHashtags(sourceId) {
+  if (!checkAPIReady()) return;
+  const text = document.getElementById(sourceId)?.value || document.getElementById('content-output')?.textContent || '';
+  if (!text || text.length < 5) { showToast('Genera contenido primero o escribe un tema', 'error'); return; }
+  document.getElementById('hashtags-output').style.display = 'block';
+  document.getElementById('hashtags-box').textContent = '⏳ Generando hashtags...';
+  try {
+    const result = await callAI(`Genera 20 hashtags virales y relevantes para este contenido/tema: "${text.substring(0,300)}". 
+Mezcla hashtags grandes (millones de posts), medianos y de nicho. Formato: #hashtag separados por espacios.`);
+    document.getElementById('hashtags-box').textContent = result;
+  } catch(e) {
+    document.getElementById('hashtags-box').textContent = '❌ Error: ' + e.message;
+  }
+}
+
+async function generateFromURL() {
+  if (!checkAPIReady()) return;
+  const url = document.getElementById('c-url').value.trim();
+  if (!url) { showToast('Ingresa una URL válida', 'error'); return; }
+  const extra = document.getElementById('c-url-extra').value;
+  const platform = document.getElementById('c-url-platform').value;
+  const tone = document.getElementById('c-url-tone').value;
+  setOutputLoading('url-output');
+  try {
+    const result = await callAI(`Eres un periodista y creador de contenido digital experto.
+Basándote en el artículo/noticia de esta URL: ${url}
+${extra ? 'Instrucciones adicionales: ' + extra : ''}
+Crea contenido optimizado para ${platform} con tono ${tone}.
+Como no puedo acceder a la URL directamente, crea un análisis y contenido basado en el tema que sugiere la URL, 
+siendo creativo y generando contenido de valor sobre ese tema.`);
+    setOutput('url-output', result);
+  } catch(e) {
+    setOutput('url-output', '❌ Error: ' + e.message);
+    showToast(e.message, 'error');
+  }
+}
+
+async function generateScript() {
+  if (!checkAPIReady()) return;
+  const topic = document.getElementById('c-script-topic').value.trim();
+  if (!topic) { showToast('Escribe el tema del guión', 'error'); return; }
+  const duration = document.getElementById('c-script-duration').value;
+  const style = document.getElementById('c-script-style').value;
+  setOutputLoading('script-output');
+  try {
+    const result = await callAI(`Eres un guionista experto en contenido viral para YouTube y TikTok.
+Crea un guión ${duration} de estilo ${style} sobre: "${topic}".
+Estructura: HOOK (primeros 3 seg), DESARROLLO, CIERRE + CTA.
+Incluye indicaciones de [PAUSA], [ÉNFASIS], [MÚSICA], [TEXTO EN PANTALLA] donde corresponda.
+El guión debe ser dinámico, mantener la atención y generar engagement.`);
+    setOutput('script-output', result);
+  } catch(e) {
+    setOutput('script-output', '❌ Error: ' + e.message);
+    showToast(e.message, 'error');
+  }
+}
+
+async function generateStory() {
+  if (!checkAPIReady()) return;
+  const topic = document.getElementById('story-topic').value.trim();
+  if (!topic) { showToast('Escribe el tema de la historia', 'error'); return; }
+  const platform = document.getElementById('story-platform').value;
+  const chapters = document.getElementById('story-chapters').value;
+  setOutputLoading('story-output');
+  try {
+    const result = await callAI(`Eres un storyteller experto en narrativa digital para ${platform}.
+Crea una historia en ${chapters} capítulos/segmentos sobre: "${topic}".
+Cada capítulo debe tener: TÍTULO, HOOK de apertura, DESARROLLO narrativo, CLIFFHANGER o transición.
+Usa técnicas de storytelling: conflicto, tensión, emoción, identificación del público.
+Optimizado para retención máxima en ${platform}.`);
+    setOutput('story-output', result);
+    // Update structure preview
+    const lines = result.split('\n').filter(l => l.trim());
+    const structureEl = document.getElementById('story-structure');
+    const chapterTitles = lines.filter(l => l.match(/capítulo|chapter|parte|part|segmento|\d+\./i)).slice(0, parseInt(chapters));
+    if (chapterTitles.length > 0) {
+      structureEl.innerHTML = chapterTitles.map((t, i) => `
+        <div style="background:var(--bg3);border-radius:8px;padding:12px;border-left:3px solid var(--accent2);margin-bottom:8px;">
+          <div style="font-weight:700;color:var(--accent2);font-size:0.8rem;">CAPÍTULO ${i+1}</div>
+          <div style="color:var(--text);font-size:0.82rem;margin-top:4px;">${t.trim()}</div>
+        </div>`).join('');
+    }
+  } catch(e) {
+    setOutput('story-output', '❌ Error: ' + e.message);
+    showToast(e.message, 'error');
+  }
+}
+
+async function generateNarration() {
+  if (!checkAPIReady()) return;
+  const text = document.getElementById('voice-text').value.trim();
+  if (!text) { showToast('Escribe el texto a narrar', 'error'); return; }
+  const style = document.getElementById('voice-style').value;
+  const speed = document.getElementById('voice-speed').value;
+  setOutputLoading('narration-output');
+  try {
+    const result = await callAI(`Eres un experto en producción de audio y narración profesional.
+Optimiza este texto para narración con estilo ${style} y velocidad ${speed}:
+"${text}"
+Añade: marcas de pausa [PAUSA CORTA] [PAUSA LARGA], énfasis [ÉNFASIS], indicaciones de respiración [RESPIRAR].
+El resultado debe sonar natural, fluido y mantener el estilo ${style} en todo momento.
+Incluye también una versión del texto sin marcas al final.`);
+    setOutput('narration-output', result);
+  } catch(e) {
+    setOutput('narration-output', '❌ Error: ' + e.message);
+    showToast(e.message, 'error');
+  }
+}
+
+async function generateImagePrompt() {
+  if (!checkAPIReady()) return;
+  const prompt = document.getElementById('img-prompt').value.trim();
+  const preset = document.getElementById('img-preset').value;
+  if (!prompt) { showToast('Describe la imagen que quieres generar', 'error'); return; }
+  setOutputLoading('img-output');
+  const presetStyles = {
+    cyberpunk: 'cyberpunk neon aesthetic, futuristic city, neon lights, rain reflections, dark atmosphere',
+    minimal: 'minimal corporate design, clean lines, professional, white background, modern typography',
+    luxury: 'luxury gold aesthetic, elegant, premium, bokeh background, high-end photography style',
+    anime: 'anime manga style, vibrant colors, cel shading, Japanese animation aesthetic',
+    retro: 'retro synthwave 80s aesthetic, purple and pink gradients, grid lines, vintage futurism',
+    nature: 'nature organic style, soft lighting, earth tones, natural textures, peaceful atmosphere'
+  };
+  try {
+    const result = await callAI(`Eres un experto en prompt engineering para generadores de imágenes IA (Midjourney, DALL-E, Stable Diffusion, Ideogram).
+Crea un prompt optimizado en inglés para: "${prompt}"
+${preset ? 'Estilo: ' + (presetStyles[preset] || preset) : ''}
+El prompt debe incluir: descripción principal, estilo artístico, iluminación, composición, calidad (4K, ultra detailed, etc.), y parámetros de aspecto si aplica.
+Formato: prompt completo en inglés listo para copiar y pegar.`);
+    setOutput('img-output', result);
+  } catch(e) {
+    setOutput('img-output', '❌ Error: ' + e.message);
+    showToast(e.message, 'error');
+  }
+}
+
+async function generateLogoPrompt() {
+  if (!checkAPIReady()) return;
+  const name = document.getElementById('brand-name').value.trim();
+  const style = document.getElementById('logo-style').value;
+  const colors = document.getElementById('brand-colors').value;
+  if (!name) { showToast('Escribe el nombre de tu marca', 'error'); return; }
+  setOutputLoading('logo-output');
+  try {
+    const result = await callAI(`Eres un diseñador gráfico experto en branding y logos.
+Crea un prompt detallado en inglés para generar un logo profesional para:
+Marca: "${name}" | Estilo: ${style} | Colores: ${colors || 'a definir'}
+El prompt debe ser para Midjourney o DALL-E, incluyendo: tipo de logo, tipografía, elementos visuales, paleta de colores, estilo, fondo, resolución.
+Añade también 3 variaciones del concepto de logo.`);
+    setOutput('logo-output', result);
+  } catch(e) {
+    setOutput('logo-output', '❌ Error: ' + e.message);
+    showToast(e.message, 'error');
+  }
+}
+
+async function generateBannerPrompt() {
+  if (!checkAPIReady()) return;
+  const theme = document.getElementById('banner-theme')?.value.trim() || document.getElementById('brand-name')?.value.trim() || '';
+  const platform = document.getElementById('banner-platform')?.value || 'youtube';
+  if (!theme) { showToast('Escribe el tema del banner', 'error'); return; }
+  setOutputLoading('banner-output');
+  const dimensions = { youtube: '2560x1440px', tiktok: '1080x1920px', instagram: '1080x1080px', twitter: '1500x500px' };
+  try {
+    const result = await callAI(`Eres un diseñador experto en banners y arte visual para redes sociales.
+Crea un prompt detallado en inglés para generar un banner profesional para ${platform} (${dimensions[platform]||'1920x1080px'}).
+Tema: "${theme}"
+El prompt debe incluir: composición visual, elementos gráficos, tipografía, colores, efectos, estilo artístico, y aspectos técnicos de la plataforma.
+Optimizado para ${platform}.`);
+    setOutput('banner-output', result);
+  } catch(e) {
+    setOutput('banner-output', '❌ Error: ' + e.message);
+    showToast(e.message, 'error');
+  }
+}
+
+async function generateSEO() {
+  if (!checkAPIReady()) return;
+  const keyword = document.getElementById('seo-keyword').value.trim();
+  const platform = document.getElementById('seo-platform').value;
+  const lang = document.getElementById('seo-lang').value;
+  if (!keyword) { showToast('Escribe el keyword o tema', 'error'); return; }
+  setOutputLoading('seo-output');
+  const langNames = { es: 'español', en: 'inglés', zh: 'chino mandarín' };
+  try {
+    const result = await callAI(`Eres un experto en SEO y optimización de contenido para ${platform}.
+Genera un paquete SEO completo en ${langNames[lang] || 'español'} para: "${keyword}"
+Incluye:
+1. 5 títulos SEO optimizados (con keyword al inicio)
+2. Meta descripción (160 caracteres máx)
+3. 20 tags/etiquetas (mix de short-tail y long-tail)
+4. Descripción larga para ${platform} (300 palabras)
+5. 3 variaciones de keyword relacionadas
+6. Score de competencia estimado (bajo/medio/alto)`);
+    setOutput('seo-output', result);
+  } catch(e) {
+    setOutput('seo-output', '❌ Error: ' + e.message);
+    showToast(e.message, 'error');
+  }
+}
+
+async function generateCampaign() {
+  if (!checkAPIReady()) return;
+  const topic = document.getElementById('campaign-topic').value.trim();
+  const objective = document.getElementById('campaign-objective').value;
+  if (!topic) { showToast('Escribe el tema de la campaña', 'error'); return; }
+  const platforms = [];
+  document.querySelectorAll('#campaign-platforms .checkbox-item.checked input').forEach(cb => platforms.push(cb.value));
+  if (platforms.length === 0) { showToast('Selecciona al menos una plataforma', 'error'); return; }
+  setOutputLoading('campaign-output');
+  try {
+    const result = await callAI(`Eres un estratega de marketing digital experto en campañas multiplataforma.
+Crea una estrategia de campaña completa para:
+Tema: "${topic}" | Objetivo: ${objective} | Plataformas: ${platforms.join(', ')}
+Incluye para cada plataforma:
+- Tipo de contenido recomendado
+- Frecuencia de publicación
+- Horarios óptimos
+- Formato específico
+- Copy de ejemplo
+- KPIs a medir
+También incluye: calendario de 30 días, presupuesto estimado (orgánico vs pagado), y métricas de éxito.`);
+    setOutput('campaign-output', result);
+  } catch(e) {
+    setOutput('campaign-output', '❌ Error: ' + e.message);
+    showToast(e.message, 'error');
+  }
+}
+
+async function getTrends() {
+  if (!checkAPIReady()) return;
+  const container = document.getElementById('trends-list');
+  container.innerHTML = '<div style="color:var(--text2);">⏳ Cargando tendencias...</div>';
+  try {
+    const result = await callAI(`Eres un analista de tendencias en redes sociales. 
+Lista los 10 temas más virales y tendencias actuales en redes sociales (YouTube, TikTok, Instagram) en 2024-2025.
+Para cada tema incluye: nombre del tema, categoría, nivel de viralidad (🔥🔥🔥), y una breve descripción de por qué es tendencia.
+Formato JSON array: [{"rank":1,"name":"...","category":"...","viral":"🔥🔥🔥","desc":"..."}]`);
+    try {
+      const jsonMatch = result.match(/\[[\s\S]*\]/);
+      if (jsonMatch) {
+        const trends = JSON.parse(jsonMatch[0]);
+        container.innerHTML = trends.map(t => `
+          <div class="trend-item" onclick="document.getElementById('story-topic').value='${t.name.replace(/'/g,"\\'")}';showSection('storytelling');">
+            <div class="trend-rank">${t.rank}</div>
+            <div class="trend-info">
+              <div class="trend-name">${t.name}</div>
+              <div class="trend-meta">${t.category} · ${t.desc?.substring(0,80)||''}</div>
+            </div>
+            <div class="trend-badge">${t.viral || '🔥'}</div>
+          </div>`).join('');
+      } else { container.textContent = result; }
+    } catch { container.textContent = result; }
+  } catch(e) {
+    container.innerHTML = '<div style="color:var(--red);">❌ ' + e.message + '</div>';
+  }
+}
+
+async function getLiveTrends() {
+  await getTrends();
+}
+
+function simulateMetrics() {
+  const engagement = Math.floor(Math.random() * 40) + 60;
+  const viral = Math.floor(Math.random() * 50) + 40;
+  const seo = Math.floor(Math.random() * 30) + 65;
+  document.getElementById('metric-engagement').textContent = engagement + '%';
+  document.getElementById('metric-viral').textContent = viral + '%';
+  document.getElementById('metric-seo').textContent = seo + '/100';
+  document.getElementById('prog-engagement').style.width = engagement + '%';
+  document.getElementById('prog-viral').style.width = viral + '%';
+  document.getElementById('prog-seo').style.width = seo + '%';
+  showToast('Métricas simuladas generadas', 'success');
+}
+
+async function extendOutput(outputId, section) {
+  if (!checkAPIReady()) return;
+  const currentContent = document.getElementById(outputId)?.textContent;
+  if (!currentContent || currentContent.includes('aparecerá aquí')) {
+    showToast('Genera contenido primero', 'error'); return;
+  }
+  const el = document.getElementById(outputId);
+  const prev = el.textContent;
+  el.innerHTML = '<div style="display:flex;align-items:center;gap:10px;color:var(--text2);"><div class="spinner"></div> Extendiendo ' + section + '...</div>';
+  try {
+    const result = await callAI(`Basándote en este contenido, extiende y mejora la sección "${section}" con más detalle, ejemplos y profundidad. 
+Mantén el mismo tono y estilo. Devuelve el contenido COMPLETO con la sección extendida integrada:
+${prev.substring(0, 1500)}`);
+    el.textContent = result;
+  } catch(e) {
+    el.textContent = prev;
+    showToast('Error al extender: ' + e.message, 'error');
+  }
+}
+
+function exportCampaign(platform) {
+  const content = document.getElementById('campaign-output')?.textContent;
+  if (!content || content.includes('aparecerá')) { showToast('Genera una campaña primero', 'error'); return; }
+  const blob = new Blob([content], { type: 'text/plain' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'campaña-' + platform + '.txt';
+  a.click();
+  showToast('Exportado para ' + platform, 'success');
+}
+
+// ============================================================
+// CHAT AGENTICO
+// ============================================================
+const CHAT_SYSTEM = `Eres DULA AI, un asistente experto y agente especializado en:
+- Estrategias de redes sociales (YouTube, TikTok, Instagram, LinkedIn, Twitter/X)
+- Creación de contenido con IA (prompts, guiones, storytelling, SEO)
+- Monetización de canales y cuentas
+- Tendencias virales y algoritmos de plataformas
+- Marketing digital y growth hacking
+- Herramientas de IA para creadores de contenido
+- Análisis de métricas y optimización de performance
+
+Respondes de forma práctica, con ejemplos concretos, estrategias accionables y tips específicos.
+Cuando el usuario pregunte sobre creación de contenido, ofrece prompts listos para usar.
+Eres entusiasta, profesional y orientado a resultados.`;
+
+function updateChatView() {
+  const hasAPI = APP.activeAPI && APP.apis[APP.activeAPI];
+  document.getElementById('chat-locked-view').style.display = hasAPI ? 'none' : 'flex';
+  document.getElementById('chat-active-view').style.display = hasAPI ? 'block' : 'none';
+  if (hasAPI) {
+    const modelLabel = APP.models[APP.activeAPI] || APP.activeAPI;
+    document.getElementById('chat-model-label').textContent = modelLabel;
+  }
+}
+
+async function sendChat() {
+  const input = document.getElementById('chat-input');
+  const msg = input.value.trim();
+  if (!msg) return;
+  if (!checkAPIReady()) return;
+  input.value = '';
+  addChatMessage(msg, 'user');
+  APP.chatHistory.push({ role: 'user', content: msg });
+  const typingEl = addChatMessage('...', 'ai', true);
+  try {
+    // Build context-aware prompt
+    const historyText = APP.chatHistory.slice(-6).map(m => `${m.role === 'user' ? 'Usuario' : 'DULA AI'}: ${m.content}`).join('\n');
+    const fullPrompt = `${CHAT_SYSTEM}\n\nHistorial de conversación:\n${historyText}\n\nResponde al último mensaje del usuario de forma experta y práctica.`;
+    const result = await callAI(fullPrompt);
+    typingEl.remove();
+    addChatMessage(result, 'ai');
+    APP.chatHistory.push({ role: 'assistant', content: result });
+    // Keep history manageable
+    if (APP.chatHistory.length > 20) APP.chatHistory = APP.chatHistory.slice(-20);
+  } catch(e) {
+    typingEl.remove();
+    addChatMessage('❌ Error: ' + e.message, 'ai');
+    showToast(e.message, 'error');
+  }
+}
+
+function addChatMessage(text, role, isTyping) {
+  const container = document.getElementById('chat-messages');
+  const div = document.createElement('div');
+  div.className = 'chat-msg ' + role;
+  if (role === 'ai') {
+    div.innerHTML = '<div class="msg-label">DULA AI</div>' + (isTyping ? '<div class="spinner"></div>' : escapeHtml(text).replace(/\n/g, '<br>'));
+  } else {
+    div.textContent = text;
+  }
+  container.appendChild(div);
+  container.scrollTop = container.scrollHeight;
+  return div;
+}
+
+function escapeHtml(text) {
+  return text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+// ============================================================
+// NOTES
+// ============================================================
+function saveNote() {
+  const title = document.getElementById('note-title').value.trim();
+  const content = document.getElementById('note-content').value.trim();
+  const color = document.getElementById('note-color').value;
+  if (!title) { showToast('Escribe un título para la nota', 'error'); return; }
+  APP.notes.push({ id: Date.now(), title, content, color, folder: 'general', date: new Date().toLocaleDateString() });
+  saveToStorage();
+  renderNotes();
+  document.getElementById('note-title').value = '';
+  document.getElementById('note-content').value = '';
+  showToast('Nota guardada', 'success');
+}
+
+function renderNotes(filter) {
+  const grid = document.getElementById('notes-grid');
+  let notes = APP.notes;
+  if (filter && filter !== 'all') notes = notes.filter(n => n.folder === filter);
+  grid.innerHTML = notes.map(n => `
+    <div class="note-card" style="background:${n.color}20;border-color:${n.color}40;">
+      <div class="note-title">${escapeHtml(n.title)}</div>
+      <div class="note-body">${escapeHtml(n.content.substring(0,150))}${n.content.length > 150 ? '...' : ''}</div>
+      <div style="font-size:0.72rem;color:var(--text2);margin-top:6px;">${n.date || ''}</div>
+      <div class="note-actions">
+        <button class="btn btn-secondary btn-sm" onclick="copyText('${escapeHtml(n.content).replace(/'/g,"\\'")}')">Copiar</button>
+        <button class="btn btn-secondary btn-sm" style="color:var(--red);" onclick="deleteNote(${n.id})">🗑️</button>
+      </div>
+    </div>`).join('') || '<div style="color:var(--text2);padding:20px;">No hay notas aún.</div>';
+}
+
+function filterNotes(filter) { renderNotes(filter); }
+function deleteNote(id) {
+  APP.notes = APP.notes.filter(n => n.id !== id);
+  saveToStorage(); renderNotes();
+}
+function addFolder() {
+  const name = prompt('Nombre de la carpeta:');
+  if (name) showToast('Carpeta "' + name + '" creada', 'success');
+}
+
+// ============================================================
+// PROMPTS LIBRARY
+// ============================================================
+function saveToPrompts(outputId) {
+  const content = document.getElementById(outputId)?.textContent;
+  if (!content || content.includes('aparecerá aquí')) { showToast('No hay contenido para guardar', 'error'); return; }
+  APP.prompts.push({ id: Date.now(), text: content.substring(0, 500), full: content, date: new Date().toLocaleDateString() });
+  saveToStorage(); renderPrompts();
+  showToast('Guardado en biblioteca de prompts', 'success');
+}
+
+function renderPrompts() {
+  const list = document.getElementById('prompts-list');
+  list.innerHTML = APP.prompts.map(p => `
+    <div class="prompt-item">
+      <div class="prompt-text">${escapeHtml(p.text)}${p.text.length >= 500 ? '...' : ''}<br><span style="font-size:0.72rem;color:var(--text2);">${p.date}</span></div>
+      <div class="prompt-actions">
+        <button class="btn btn-secondary btn-sm" onclick="copyText('${escapeHtml(p.full || p.text).replace(/'/g,"\\'")}')">Copiar</button>
+        <button class="btn btn-secondary btn-sm" style="color:var(--red);" onclick="deletePrompt(${p.id})">🗑️</button>
+      </div>
+    </div>`).join('') || '<div style="color:var(--text2);padding:20px;">No hay prompts guardados aún.</div>';
+}
+
+function filterPrompts() { renderPrompts(); }
+function deletePrompt(id) {
+  APP.prompts = APP.prompts.filter(p => p.id !== id);
+  saveToStorage(); renderPrompts();
+}
+function openAddPrompt() {
+  const text = prompt('Escribe tu prompt:');
+  if (text) {
+    APP.prompts.push({ id: Date.now(), text: text.substring(0,500), full: text, date: new Date().toLocaleDateString() });
+    saveToStorage(); renderPrompts();
+    showToast('Prompt añadido', 'success');
+  }
+}
+
+// ============================================================
+// BUTTON CREATOR
+// ============================================================
+function createButton() {
+  const label = document.getElementById('btn-label').value.trim();
+  const url = document.getElementById('btn-url').value.trim();
+  const color = document.getElementById('btn-color').value;
+  const shape = document.getElementById('btn-shape').value;
+  if (!label || !url) { showToast('Completa la etiqueta y URL', 'error'); return; }
+  const btn = { label, url, color, shape, id: Date.now() };
+  APP.buttons.push(btn);
+  saveToStorage();
+  renderButtonInPreview(btn);
+  document.getElementById('btn-label').value = '';
+  document.getElementById('btn-url').value = '';
+}
+
+function renderButtonInPreview(btn) {
+  const preview = document.getElementById('btn-preview');
+  const a = document.createElement('a');
+  a.href = btn.url; a.target = '_blank';
+  a.style.cssText = `background:${btn.color};color:white;padding:10px 20px;border-radius:${btn.shape};text-decoration:none;font-weight:600;font-size:0.88rem;display:inline-block;`;
+  a.textContent = btn.label;
+  preview.appendChild(a);
+}
+
+function copyButtonsHTML() {
+  const buttons = APP.buttons.map(b =>
+    `<a href="${b.url}" target="_blank" style="background:${b.color};color:white;padding:10px 20px;border-radius:${b.shape};text-decoration:none;font-weight:600;display:inline-block;margin:4px;">${b.label}</a>`
+  ).join('\n');
+  copyText(buttons);
+}
+
+function clearButtons() {
+  APP.buttons = [];
+  document.getElementById('btn-preview').innerHTML = '';
+  saveToStorage();
+  showToast('Botones eliminados', 'success');
+}
+
+// ============================================================
+// UTILS
+// ============================================================
+function copyOutput(id) {
+  const text = document.getElementById(id)?.textContent;
+  if (text) copyText(text);
+}
+
+function copyText(text) {
+  navigator.clipboard.writeText(text).then(() => showToast('Copiado al portapapeles', 'success')).catch(() => {
+    const ta = document.createElement('textarea');
+    ta.value = text; document.body.appendChild(ta); ta.select();
+    document.execCommand('copy'); document.body.removeChild(ta);
+    showToast('Copiado', 'success');
+  });
+}
+
+function showToast(msg, type) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show ' + (type || '');
+  clearTimeout(t._timeout);
+  t._timeout = setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+function toggleCheck(el) {
+  el.classList.toggle('checked');
+  const cb = el.querySelector('input');
+  if (cb) cb.checked = el.classList.contains('checked');
+}
+
+function installApp() {
+  if (window.deferredPrompt) {
+    window.deferredPrompt.prompt();
+  } else {
+    showToast('Usa el menú del navegador para instalar la app', '');
+  }
+}
+
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  window.deferredPrompt = e;
+});
+</script>
+</body>
+</html>
