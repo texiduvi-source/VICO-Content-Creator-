@@ -1,0 +1,37 @@
+{
+  "name": "Dula Creator",
+  "short_name": "Dula Creator",
+  "description": "AI Content Creator Pro — Genera contenido para redes sociales con IA",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#0a0a0f",
+  "theme_color": "#7c3aed",
+  "lang": "es",
+  "categories": ["productivity", "utilities"],
+  "icons": [
+    {
+      "src": "./icon.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "./icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [],
+  "shortcuts": [
+    {
+      "name": "Editor de Vídeo",
+      "short_name": "Editor",
+      "description": "Abrir el editor de vídeo",
+      "url": "./index.html#editor",
+      "icons": [{ "src": "./icon.png", "sizes": "192x192" }]
+    }
+  ]
+}
